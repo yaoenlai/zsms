@@ -1,7 +1,7 @@
 <?php
 namespace app\admin\controller;
 
-class Retire extends Common
+class Retire extends Common 
 {
     public function list(){
         $this->_order = 'C_ADD_TIME DESC';
