@@ -1,5 +1,5 @@
 <?php
-/** 
+/**  
  * 公共类
  *  */
 namespace app\api\controller;

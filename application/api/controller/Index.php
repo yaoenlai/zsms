@@ -1,4 +1,4 @@
-<?php
+<?php 
 namespace app\api\controller;
 
 use think\Controller;

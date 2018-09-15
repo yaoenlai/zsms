@@ -1,5 +1,5 @@
 <?php
-/** 
+/**  
  * 文章资讯
  *  */
 namespace app\api\controller;
