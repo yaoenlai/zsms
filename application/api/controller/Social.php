@@ -8,36 +8,8 @@ use think\Controller;
 use app\api\model\Card;
 use think\Db;
 
-class Social extends Controller
+class Social extends Common
 {
-    private $_loginInfo=[];
-    
-    public function _initialize(){
-        if(! request()->isPost()){
-            
-            rjson("",'400','请求方式错误');
-        } else {
-            //验证用户登录信息
-            if(empty(input('post.token_phone')) || empty(input('post.token_token')) ){
-                
-                rjson('', '400', showRegError(-17));
-            } else {
-                
-                $where = array(
-                    'phone'=>input('post.token_phone'),
-                    'token'=>input('post.token_token'),
-                );
-                $info = db('AppToken')->where($where)->find();
-                if(empty($info)){
-                    
-                    rjson('', '400', showRegError(-12));
-                } else {
-                    
-                    $this->_loginInfo = $info;
-                }
-            }
-        }
-    }
     
     //验证是否申请过社保卡(开始申请)
     public function card_validate(){

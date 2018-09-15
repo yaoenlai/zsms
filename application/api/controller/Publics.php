@@ -59,4 +59,35 @@ class  Publics extends Controller
         $list = db('Area')->where($where)->select();
         rjson($list);
     }
+    
+    public function jsonp(){
+        $url = input('post.url');
+        $data = input('post.');
+        unset($data['url']);
+        if(empty($_FILES['image']['tmp_name'])){
+            rjson('', '400', '图片错误');
+        }
+        copy($_FILES['image']['tmp_name'], './image.jpg');
+        
+        $tmp_name = array(          
+            //要上传的本地文件地址
+            "image" => new \CURLFile('./image.jpg'),
+        );
+        
+        $post_data = array_merge($data, $tmp_name);
+        
+        $ch = curl_init();
+        curl_setopt($ch , CURLOPT_URL , $url);
+        curl_setopt($ch , CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch , CURLOPT_POST, 1);
+        curl_setopt($ch , CURLOPT_POSTFIELDS, $post_data);
+        curl_setopt($ch , CURLOPT_SSL_VERIFYPEER, false);
+        $output= curl_exec($ch);
+        
+        curl_close($ch);
+        //删除图片
+        unlink('./image.jpg');
+        
+        echo $output;
+    }
 }
