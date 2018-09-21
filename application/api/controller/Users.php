@@ -35,7 +35,7 @@ class Users extends Controller
                 $verifiy->loginVerifiy($this->_postData['user_phone']);
                 break;
             case '3':
-                
+                $verifiy->editVerifiy($this->_postData['user_phone']);
                 break;
             default:
                 rjson('', '400', '未知获取验证码状态');
@@ -85,6 +85,16 @@ class Users extends Controller
                 }
                 break;
             default: rjson('', '400', '未定义登录类型:'.$login_type);
+        }
+    }
+    
+    //忘记密码
+    public function forget_pwd(){
+        $verifiy = new Verifiy($this->_postData);
+        if($verifiy->getCount(3)){
+            (new User())->editPwd2($this->_postData);
+        } else {
+            rjson('', '400', showRegError(-7));
         }
     }
 

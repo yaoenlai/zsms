@@ -7,6 +7,7 @@ namespace app\api\controller;
 use think\Controller;
 use app\api\model\Card;
 use think\Db;
+use app\api\model\Retire;
 
 class Social extends Common
 {
@@ -49,6 +50,24 @@ class Social extends Common
 
     //支付订单 （回调获取）
     public function pay_order(){
+        switch (input('post.pay_type')){
+            case '1': 
+                $this->pay_card_order();
+                break;
+            case '2':
+                $this->pay_card_mail_order();
+                break;
+            case '3':
+                $this->pay_retires_order();
+                break;
+            default:
+                rjson('未知支付类型, pay_type:['.input('post.pay_type').']');
+                break;
+        }
+    }
+    
+    //支付社保订单
+    private function pay_card_order(){
         $where = array(
             "prepay_id" => input('post.prepay_id'),
         );
@@ -58,6 +77,35 @@ class Social extends Common
             (new Card())->addCard($info);
         } else {
             rjson('', '400', '该订单有问题，请检查');
+        }
+    }
+    
+    //社保邮寄费用支付
+    private function pay_card_mail_order(){
+        $where = array(
+            "prepay_id" => input('post.prepay_id'),
+        );
+        $info = db("CardMail")->where($where)->find();
+        if( !empty($info) ){
+            
+            (new Card())->addCardMailPay($info["ID"],$info['CARD_ID']);
+        } else {
+            rjson('', '400', '该订单有问题，请检查');
+        }
+    }
+    
+    //退休支付
+    private function pay_retires_order(){
+        $where = [
+            'U_ID'      => $this->_loginInfo['U_ID'],
+            'IS_LOCK'   => '1',
+            'PREPAY_ID' => $this->_postData['prepay_id'],
+        ];
+        $info = db('Retire')->where($where)->find();
+        if( !empty($info) ){
+            (new Retire())->orderPay($info['ID']);
+        } else {
+            rjson('', '400', '请检查订单号');
         }
     }
     
@@ -164,6 +212,15 @@ class Social extends Common
         rjson($info);
     }
     
+    //获取监护人详情
+    public function guardian_detail(){
+        $where = [
+            'PID'   => input('post.card_id'),
+        ];
+        $info = db("guardian")->where($where)->find();
+        rjson($info);
+    }
+    
     //保存社保详情
     public function card_detail_edit(){
         
@@ -191,20 +248,6 @@ class Social extends Common
             (new Card())->addMailOrder($this->_loginInfo['U_ID']);
         } else {
             rjson('', '400', '社保号有问题');
-        }
-    }
-
-    //社保邮寄费用支付
-    public function pay_card_mail_order(){
-        $where = array(
-            "prepay_id" => input('post.prepay_id'),
-        );
-        $info = db("CardMail")->where($where)->find();
-        if( !empty($info) ){
-            
-            (new Card())->addCardMailPay($info["ID"],$info['CARD_ID']);
-        } else {
-            rjson('', '400', '该订单有问题，请检查');
         }
     }
 }

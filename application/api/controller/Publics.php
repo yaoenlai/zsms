@@ -64,15 +64,17 @@ class  Publics extends Controller
         $url = input('post.url');
         $data = input('post.');
         unset($data['url']);
-        if(empty($_FILES['image']['tmp_name'])){
-            rjson('', '400', '图片错误');
-        }
-        copy($_FILES['image']['tmp_name'], './image.jpg');
-        
+
         $tmp_name = array(          
             //要上传的本地文件地址
-            "image" => new \CURLFile('./image.jpg'),
+            "image" => new \CURLFile(ROOT_PATH.'/public/'.$data['image']),
         );
+        
+        if(!empty($data['image_ref1'])) $tmp_name["image_ref1"] = new \CURLFile(ROOT_PATH.'/public/'.$data['image_ref1']);
+        if(!empty($data['image_ref2'])) $tmp_name["image_ref2"] = new \CURLFile(ROOT_PATH.'/public/'.$data['image_ref2']);
+        if(!empty($data['image_ref3'])) $tmp_name["image_ref3"] = new \CURLFile(ROOT_PATH.'/public/'.$data['image_ref3']);
+        
+        unset($data['image']);
         
         $post_data = array_merge($data, $tmp_name);
         
@@ -83,11 +85,52 @@ class  Publics extends Controller
         curl_setopt($ch , CURLOPT_POSTFIELDS, $post_data);
         curl_setopt($ch , CURLOPT_SSL_VERIFYPEER, false);
         $output= curl_exec($ch);
-        
+        if(curl_errno($ch)){
+            rjson('', '400', curl_error($ch));
+        }
         curl_close($ch);
+        
         //删除图片
-        unlink('./image.jpg');
+        unlink(ROOT_PATH.'/public/'.input('post.image'));
+        if(!empty($data['image_ref1'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref1'));
+        if(!empty($data['image_ref2'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref2'));
+        if(!empty($data['image_ref3'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref3'));
         
         echo $output;
+    }
+    
+    public function take_cut_pic(){
+        $url = input('post.url');
+        $post_data = input('post.');
+        unset($post_data['url']);
+        
+        $data = $this->http_url($url, json_encode($post_data));
+        
+        $image_path = './image/'.$post_data['file_name'].'.jpg';
+        file_put_contents($image_path, $data);
+        
+        rjson($image_path);
+    }
+       
+    public function http_url($url,$data=null){
+        
+        $headers = array(
+            'Content-Type: application/json;charset=utf-8',
+            'Content-Length: ' . strlen($data),
+            'y-cli:pc'
+        );
+        
+        $curl=curl_init();
+        //设置请求地址
+        curl_setopt($curl,CURLOPT_URL,$url);
+        curl_setopt($curl,CURLOPT_POST,1);
+        curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,false);
+        curl_setopt($curl,CURLOPT_SSL_VERIFYHOST,false);
+        curl_setopt($curl,CURLOPT_POSTFIELDS,$data);
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $output=curl_exec($curl);
+        curl_close($curl);
+        return $output;
     }
 }

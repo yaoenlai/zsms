@@ -30,22 +30,7 @@ class Retires extends Common
         } else {
             (new Retire())->add($this->_loginInfo['U_ID']);
         }
-    }
-    
-    //支付
-    public function order_pay(){
-        $where = [
-            'U_ID'      => $this->_loginInfo['U_ID'],
-            'IS_LOCK'   => '1',
-            'PREPAY_ID' => $this->_postData['prepay_id'],
-        ];
-        $info = db('Retire')->where($where)->find();
-        if( !empty($info) ){
-            (new Retire())->orderPay($info['ID']);
-        } else {
-            rjson('', '400', '请检查订单号');
-        }
-    }
+    }  
     
     public function edit(){
         $where = [
@@ -57,6 +42,23 @@ class Retires extends Common
             (new Retire())->edit();
         } else {
             rjson('', '400', '请检查退休申请号');
+        }
+    }
+    
+    /**
+     * 获取二寸照片
+     *  @param AAC999 个人管理编码
+     * */
+    public function getImage(){
+        $where = [
+            'C_CODE'    => input('post.code')
+            ,'U_ID'     => $this->_loginInfo["U_ID"]
+        ];
+        $head_img = db('Card')->where($where)->value('HEAD_IMG');
+        if(empty($head_img)){
+            rjson('', '400', '该身份证没有录入图片');
+        } else {
+            rjson($head_img);
         }
     }
 }

@@ -60,6 +60,22 @@ class User extends Model
         }
     }
 
+    //验证码修改密码
+    public function editPwd2($data){
+        $where = [
+            'phone' => $data['user_phone'],
+        ];
+        $save_data = [
+            'PASSWORD'  => $data['new_pwd'],
+        ];
+        if( $this->where($where)->update($save_data) ){
+            db('verifiy')->where(array('phone'=>$data['user_phone'],'verifiy' => $data['verifiy'],'type'=>3))->delete();
+            rjson('修改成功');
+        } else {
+            rjson('', '400', '修改失败');
+        }
+    }
+    
     //存储登录token
     private function _addToken($uid, $phone){
         $find_token = db("app_token")->where(['u_id'=>$uid,"phone "=>$phone])->find();

@@ -57,8 +57,13 @@ class Verifiy extends Model
         }
     }
     //修改验证码
-    public function editVerifiy(){
-        
+    public function editVerifiy(string $phone){
+        if( db('user')->where(['phone'=>$phone])->count() ){
+            $this->_Verifiy($phone, 3);
+        }else {
+            //验证手机号是否已经注册过
+            rjson('', '400', showRegError(-6));
+        }
     }
     //验证码
     private function _Verifiy(string $phone, int $msg_type){
