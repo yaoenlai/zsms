@@ -60,6 +60,15 @@ class  Publics extends Controller
         rjson($list);
     }
     
+    //获取在线客服
+    public function getDatum(){
+        $where = [
+            'IS_LOCK'   => '1'
+        ];
+        $list = db('Datum')->where($where)->order('SORT DESC')->select();
+        rjson($list);
+    }
+    
     public function jsonp(){
         $url = input('post.url');
         $data = input('post.');

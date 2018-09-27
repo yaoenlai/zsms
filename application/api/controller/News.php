@@ -31,4 +31,13 @@ class News extends Controller
         $info = db('News')->where($where)->find();
         rjson($info);
     }
+    
+    //搜素文章
+    public function search(){
+        $where = [
+            "TITLE" => array('like', '%'.input('post.title').'%')
+        ];
+        $list = db("News2")->where($where)->select();
+        rjson($list);
+    }
 }

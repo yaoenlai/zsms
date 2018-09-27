@@ -14,7 +14,7 @@ class Member extends Common
             ,'IS_LOCK'  => '1'
         ];
         $info = db("User")->field("ID,PHONE,USERNAME,BIRTHDAY,SEX,CODE,NATION,START_TIME,END_TIME,REG_TIME,REG_IP,
-            REG_TYPE,MES_TYPE,TYPE,FID,JPUSH_ID,QRIMG,IS_REAL,INTEGRAL,NUM,ADDRESS,DEPARTMENT")->where($where)->find();
+            REG_TYPE,MES_TYPE,TYPE,FID,JPUSH_ID,QRIMG,IS_REAL,INTEGRAL,NUM,ADDRESS,DEPARTMENT,HEAD_IMG")->where($where)->find();
         rjson(array_change_key_case($info));
     }
     
@@ -55,6 +55,15 @@ class Member extends Common
         }
     }
     
-    //订单列表
+    //订单/账单列表
+    public function orderList(){
+        $where = [
+            'DELETED'   => '1'
+            ,'U_ID'     => $this->_loginInfo['U_ID']
+            ,'STATE'    => 1
+        ];
+        $list = db('Order')->where($where)->order('CREATE_TIME DESC')->select();
+        rjson($list);
+    }
     
 }

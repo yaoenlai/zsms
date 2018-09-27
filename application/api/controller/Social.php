@@ -61,7 +61,7 @@ class Social extends Common
                 $this->pay_retires_order();
                 break;
             default:
-                rjson('未知支付类型, pay_type:['.input('post.pay_type').']');
+                rjson('', '400', '未知支付类型, pay_type:['.input('post.pay_type').']');
                 break;
         }
     }
