@@ -8,8 +8,9 @@ use think\Controller;
 
 class Common extends Controller
 {
-    protected $_loginInfo=[];
-    protected $_postData=[];
+    protected $_loginInfo=[];   //登录信息
+    protected $_userInfo=[];    //登录用户信息
+    protected $_postData=[];    //post请求信息
     
     public function _initialize(){
         if(! request()->isPost()){
@@ -33,6 +34,7 @@ class Common extends Controller
                 } else {
                     
                     $this->_loginInfo = $info;
+                    $this->_userInfo = db("User")->where(['ID'=>$this->_loginInfo['U_ID']])->find();
                     $this->_postData = input('post.');
                 }
             }

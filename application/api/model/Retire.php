@@ -14,7 +14,47 @@ class Retire extends Model
         parent::initialize();
     }
     
-    //申请退休
+    //创建退休认证临时单
+    public function add2($u_id, $u_name){
+        Db::startTrans();
+        try {
+            /*订单信息开始*/
+            $number = date('YmdHis').rand(10000000, 99999900).$this->_postData['token_phone'];
+            $numbers = date('YmdHis').rand(10000000, 99999900);
+            $insert['U_ID']         = $u_id;
+            $insert['PREPAY_ID']    = $number;
+            $insert['NUMBERS']      = $numbers;
+            //退休办理费用 3
+            $insert['TYPE']         = 3;
+            $insert['CREATE_TIME']  = time();
+            $insert['STATUS']       = 2;
+            $insert['STATE']        = 1;
+            if( db('order')->insert($insert) ){
+                $insert_data = [
+                    'U_ID'                  => $u_id
+                    ,'U_NAME'               => $u_name
+                    ,'PREPAY_ID'            => $number
+                    ,'CODE'                 => $this->_postData['code']
+                    ,'CYC'                  => date("Ymd")
+                    ,'CREATE_DATE'          => date('Y-m-d H:i:s')
+                    ,'AUTHENTICATION_STATUS'=> '3'
+                ];
+                if(! db("Retire")->insert($insert_data) ){
+                    exception('创建退休临时数据失败');
+                } else {
+                    Db::commit();
+                    return db("Retire")->where($insert_data)->find();
+                }
+            } else {
+                exception(showRegError(-16));
+            }
+        } catch (\Exception $e){
+            Db::rollback();
+            rjson('', '400', $e->getMessage());
+        }
+    }
+    
+    //申请退休(废弃)
     public function add($u_id){
         Db::startTrans();
         try {
