@@ -23,6 +23,7 @@ class Retires extends Common
         $where = [
             'CODE'  => $this->_postData['code']
             ,'CYC'  => date("Ymd")
+            ,'NAME' => $this->_postData["name"]
         ];
         
         //判断是否存在退休数据
@@ -33,7 +34,6 @@ class Retires extends Common
         }
         //获取基础信息
         unset($where['CYC']);
-        $where['NAME'] = $this->_postData['name'];
         
         $find = db('RetireInfo')->where($where)->find();
         $find['PID'] = $retire_info['ID'];
@@ -128,14 +128,25 @@ class Retires extends Common
      * */
     public function getImage(){
         $where = [
-            'C_CODE'    => input('post.code')
-            ,'U_ID'     => $this->_loginInfo["U_ID"]
+            'CODE'    => input('post.code')
         ];
-        $head_img = db('Card')->where($where)->value('HEAD_IMG');
-        if(empty($head_img)){
+        $info = db("RetireImg")->where($where)->find();
+        if(empty($info)){
             rjson('', '400', '该身份证没有录入图片');
         } else {
-            rjson($head_img);
+            
+            $obj = stream_get_contents($info['IMG']);
+            $path = './image/'.date("Ymd").'/'.$info['CODE'].'.jpg';
+            //创建文件夹
+            if(!file_exists(dirname($path))){
+                mkdir(dirname($path));
+            }
+            
+            if(file_put_contents($path, $obj)){
+                rjson($path);
+            } else {
+                rjson('', '400', '获取失败');
+            }
         }
     }
 }

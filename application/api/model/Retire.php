@@ -35,6 +35,7 @@ class Retire extends Model
                     ,'U_NAME'               => $u_name
                     ,'PREPAY_ID'            => $number
                     ,'CODE'                 => $this->_postData['code']
+                    ,'NAME'                 => $this->_postData['name']
                     ,'CYC'                  => date("Ymd")
                     ,'CREATE_DATE'          => date('Y-m-d H:i:s')
                     ,'AUTHENTICATION_STATUS'=> '3'

@@ -20,7 +20,7 @@ class News extends Controller
             'IS_LOCK'   => '1',
             'PID'       => $data['pid'],
         ];
-        $list = db('News')->field('ID,TITLE')->where($where)->select();
+        $list = db('News')->field('ID,TITLE,HEAD_IMG')->where($where)->select();
         rjson($list);
     }
     //文章详情
