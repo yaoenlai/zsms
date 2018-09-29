@@ -4,7 +4,7 @@ namespace app\admin\controller;
 class Retire extends Common 
 {
     public function list(){
-        $this->_order = 'C_ADD_TIME DESC';
+        $this->_order = 'CREATE_DATE DESC';
         parent::list();
     }
     

@@ -20,4 +20,36 @@ class User extends Common
         $info = db("User")->where($where)->find();
         rjson($info);
     }
+    
+    public function shebao(){
+        $where = [
+            'ID'    => input('post.id')
+        ];
+        
+        $save = [
+            'USER_TYPE' => '1'
+        ];
+        
+        if( db('User')->where($where)->update($save) ){
+            rjson('设置社保人员成功');
+        } else {
+            rjson_error('设置失败');
+        }
+    }
+    
+    public function puton(){
+        $where = [
+            'ID'    => input('post.id')
+        ];
+        
+        $save = [
+            'USER_TYPE' => '0'
+        ];
+        
+        if( db('User')->where($where)->update($save) ){
+            rjson('设置普通人员成功');
+        } else {
+            rjson_error('设置失败');
+        }
+    }
 }
