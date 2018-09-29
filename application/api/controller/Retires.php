@@ -37,6 +37,7 @@ class Retires extends Common
         
         $find = db('RetireInfo')->where($where)->find();
         $find['PID'] = $retire_info['ID'];
+        $find['PREPAY_ID'] = $retire_info['PREPAY_ID'];
         rjson($find);
     }
     
