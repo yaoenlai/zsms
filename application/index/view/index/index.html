@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <meta content="black" name=" apple-mobile-web-app-capable" />
+    <title>邀请</title>
+    <meta name="keywords" content="关键词">
+    <meta name="description" content="网站描述">
+    <link href="__STATUS__/css/common.css" rel="stylesheet" />
+    <link href="__STATUS__/css/style.css" rel="stylesheet" />
+</head>
+<body class="n-body">
+<!--<header>
+    <div class="in-top">
+        <div class="left">
+            <a href="">
+                <span class="return"></span>
+            </a>
+        </div>
+        <div class="center">
+            <h1>张伟邀请你加入</h1>
+        </div>
+    </div>
+</header>-->
+<div class="container yao_Q container9">
+   <div class="main_1">
+       <div class="yao_BG1">
+           <div class="yao_A1">
+               <div class="head_bg">
+                   <img class="im_bg" src="__STATUS__/images/yaoqing4.png" width="100%" alt=""/>
+                   <img class="im_bg2" src="{$info['HEAD_IMG']}" width="100%"  alt=""/>
+               </div>
+
+               <a href=""><p>接受<em>{$info['USERNAME']}</em>的邀请，加入掌上民生</p></a>
+               <span>加入就能领取50积分</span>
+               <input type="text" value="" name="phone" class="text" placeholder="请输入手机号">
+               <input type="hidden" value="{$info['ID']}" name="u_id">
+               <h6><a href="" class='ljlq'>立即领取</a></h6>
+
+           </div>
+       </div>
+       <div class="yao_BG2">
+            <h2>活动规则</h2>
+           <p>本次活动仅限首次安装并通过手机号注册掌上民生的新用户参与，且每位用户只能参与一次；</p>
+           <h6><a href=""></a></h6>
+       </div>
+   </div>
+</div>
+<script type="text/javascript" src="__STATUS__/js/jquery.js"></script>
+<script type="text/javascript" >
+	$(function(){
+		$('.ljlq').removeAttr('href');//去掉a标签中的href属性
+		$('.ljlq').removeAttr('onclick');//去掉a标签中的onclick事件
+		$(".ljlq").click(function(){
+			var phone = $("input[name='phone']").val();
+			var u_id = $("input[name='u_id']").val();
+			$.ajax({
+			  type: 'POST',
+			  url: '',
+			  data: {'u_id':u_id, 'phone':phone},
+			  success: function(data){
+				  if(data.code == '200'){
+					  alert(data.data);
+				  } else {
+					  alert(data.message);
+				  }
+			  },
+			  dataType: 'json'
+			});
+		})
+	});
+</script>
+</body>
+</html>

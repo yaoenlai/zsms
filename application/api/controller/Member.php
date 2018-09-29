@@ -15,6 +15,7 @@ class Member extends Common
         ];
         $info = db("User")->field("ID,PHONE,USERNAME,BIRTHDAY,SEX,CODE,NATION,START_TIME,END_TIME,REG_TIME,REG_IP,
             REG_TYPE,MES_TYPE,TYPE,FID,JPUSH_ID,QRIMG,IS_REAL,INTEGRAL,NUM,ADDRESS,DEPARTMENT,HEAD_IMG")->where($where)->find();
+        $info['INTEGRAL'] = db('UserIntegral')->where($where)->count();
         rjson(array_change_key_case($info));
     }
     
@@ -66,4 +67,13 @@ class Member extends Common
         rjson($list);
     }
     
+    //获取积分列表
+    public function integralList(){
+        $where = [
+            'U_ID'  => $this->_loginInfo['U_ID']
+            ,'IS_LOCK'  => '1'
+        ];
+        $list = db('UserIntegral')->where($where)->order('ADDTIME DESC')->select();
+        rjson($list);
+    }
 }

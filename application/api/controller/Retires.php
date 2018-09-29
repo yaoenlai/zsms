@@ -124,7 +124,6 @@ class Retires extends Common
     
     /**
      * 获取对比照片
-     *  @param AAC999 个人管理编码
      * */
     public function getImage(){
         $where = [
