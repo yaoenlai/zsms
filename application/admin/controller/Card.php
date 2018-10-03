@@ -18,7 +18,19 @@ class Card extends Common
         if($data['exam_status'] == '2'){
             $save['EXAM_INFO'] = $data['exam_info'];
         }
-        
+        if($data['exam_status'] == '6'){
+            $email_save = [
+                'EXPRESS_NUM'   => $data['express_num']
+            ];
+            if(! db("CardMail")->where(['CARD_ID'=>$data["ID"]])->update($email_save) ){
+                rjson("", "400", "订单号填写失败");
+            }
+        }
+        if($data['exam_status'] == '7'){
+            if(! db("CardMail")->where(['CARD_ID'=>$data["ID"]])->update(['STEP_STSTUS'=>'1']) ){
+                rjson("", "400", "订单号填写失败");
+            }
+        }
         if( db("Card")->where(['ID'=>$data['ID']])->update($save) ){
             rjson('修改成功');
         } else {

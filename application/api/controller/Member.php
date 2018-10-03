@@ -88,10 +88,11 @@ class Member extends Common
     public function mailList(){
         $data = $this->_postData;
         $where = [
-            'IS_PAY'        => $data['is_pay']
-            ,'STEP_STSTUS'  => $data['step_status']
-            ,'U_ID'         => $this->_loginInfo['U_ID']
+            'U_ID'         => $this->_loginInfo['U_ID']
         ];
+        
+        if(!empty($this->_postData['is_pay'])) $where['IS_PAY'] = $this->_postData['is_pay'];
+        if(!empty($this->_postData['step_status'])) $where['STEP_STSTUS'] = $this->_postData['step_status'];
         
         $page_index = empty($this->_postData['page_index']) ? '1' : $this->_postData['page_index'];
         $page_size  = empty($this->_postData['page_size']) ? '10' : $this->_postData['page_size'];
