@@ -15,25 +15,26 @@ class Retires extends Common
             'IS_LOCK'   => '1',
         ];
         $list = db('Retire')->where($where)->select();
+        foreach ($list as $key=>$value){
+            $list[$key] = array_merge($value, getCItyName($value['AREA']));
+        }
         rjson($list);
     }
     
     //获取会员基本信息
     public function getInfo(){
-        $where = [
-            'CODE'  => $this->_postData['code']
-            ,'CYC'  => date("Ymd")
-            ,'NAME' => $this->_postData["name"]
-        ];
         
         //判断是否存在退休数据
-        $retire_info = db("Retire")->where($where)->find();
+        $retire_info = (new Retire())->validatePolicy();
         if(empty($retire_info))
         {
             $retire_info = (new Retire())->add2($this->_loginInfo['U_ID'],$this->_userInfo["USERNAME"]);
-        }
+        } 
         //获取基础信息
-        unset($where['CYC']);
+        $where = [
+            'CODE'  => $this->_postData['code']
+            ,'NAME' => $this->_postData["name"]
+        ];
         
         $find = db('RetireInfo')->where($where)->find();
         $find['PID'] = $retire_info['ID'];
@@ -102,7 +103,7 @@ class Retires extends Common
         
         $where2 = [
             'CODE'  => $data['code']
-            ,'CYC'  => date("Ymd")
+            ,'CYC'  => date("Ym")
         ];
         
         $save_data = [
@@ -112,6 +113,7 @@ class Retires extends Common
             ,'REMARKS'      => $data['remarks']
             ,'LIVE_STATUS'  => $data['live_status']
             ,'FACE_STATUS'  => $data['face_status']
+            ,'INSURANCE'    => $data['insurance']
             ,'LIVE_NUM'     => db("RetireLive")->where($where2)->count()
             ,'FACE_NUM'     => db("RetireFace")->where($where2)->count()
         ];

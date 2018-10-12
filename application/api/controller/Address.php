@@ -14,6 +14,9 @@ class Address extends Common
             'IS_LOCK'   => '1',
         ];
         $list = db("Address")->where($where)->order('IS_DEFAULT DESC')->select();
+        foreach ($list AS $key=>$value){
+            $list[$key] = array_merge($value, getCItyName($value['AREA']));
+        }
         rjson($list);
     }
     

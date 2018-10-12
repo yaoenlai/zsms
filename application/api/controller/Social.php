@@ -16,7 +16,8 @@ class Social extends Common
     public function card_validate(){
         //验证用户扫描的身份证是否已经申请过社保卡
         $where = array(
-            'c_code'    => input('post.idcard'),
+            'C_CODE'        => input('post.idcard'),
+            'REFUSE_STATUS' => '1'
         );
         if(db("card")->where($where)->count()){
             rjson('', '400', '此身份信息已经有办理/申请记录,不可继续申请了!');
@@ -209,6 +210,7 @@ class Social extends Common
             'PREPAY_ID' => input('post.prepay_id'),
         ];
         $info = db('cardOrderBak')->where($where)->find();
+        $info = array_merge($info, getCItyName($info['AREA']));
         rjson($info);
     }
     

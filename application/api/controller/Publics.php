@@ -60,12 +60,35 @@ class  Publics extends Controller
         rjson($list);
     }
     
+    //张家口参保
+    public function getZone(){
+        $where = [];
+        $list = db("zone")->where($where)->select();
+        rjson($list);
+    }
+    
     //获取在线客服
     public function getDatum(){
         $where = [
             'IS_LOCK'   => '1'
         ];
         $list = db('Datum')->where($where)->order('SORT DESC')->select();
+        rjson($list);
+    }
+    
+    //获取民族
+    public function getNation(){
+        $where = [];
+        $list = db("mz")->where($where)->select();
+        rjson($list);
+    }
+    
+    //获取险种
+    public function getInsuranceType(){
+        $where = [
+            'STATUS'    => input('post.status')
+        ];
+        $list = db("RetireInsurance")->where($where)->select();
         rjson($list);
     }
     
