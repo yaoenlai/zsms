@@ -59,3 +59,29 @@ function pushMessage($content){
     //print_r($response);
 }
 
+/**
+ * @name  区县ID获取省市区名称
+ * @param string $countyID 区县ID
+ * @return array 省市区
+ */
+function getCItyName($countyID){
+    $where = [
+        'a1.AREA_ID'    => (int)$countyID
+    ];
+    $info = db('Area')->alias('a1')
+                ->field('a3.AREA_NAME AS PROVINCE_NAME, a2.AREA_NAME AS CITY_NAME, a1.AREA_NAME AS COUNTY_NAME')
+                ->join('sb_area a2', 'a2.AREA_ID = a1.PARENT_ID', 'LEFT')
+                ->join('sb_area a3', 'a3.AREA_ID = a2.PARENT_ID', 'LEFT')
+                ->where($where)
+                ->find();
+    if(empty($info)){
+        return [
+            'PROVINCE_NAME' => null
+            ,'CITY_NAME'    => null
+            ,'COUNTY_NAME'  => null
+        ];
+    } else {
+        unset($info['NUMROW']);
+        return $info;
+    }
+}
