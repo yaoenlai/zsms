@@ -145,7 +145,7 @@ class Retires extends Common
             }
             
             if(file_put_contents($path, $obj)){
-                rjson($path);
+                rjson(trim($path,'.'));
             } else {
                 rjson('', '400', '获取失败');
             }

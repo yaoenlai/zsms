@@ -9,6 +9,18 @@ class User extends Common
     public function list(){
         $this->_order = 'REG_TIME desc';
         
+        $where = [];
+        if(!empty(input('post.phone'))){
+            $where['PHONE'] = array("LIKE", '%'.input('post.phone').'%');
+        }
+        if(!empty(input('post.code'))){
+            $where['CODE'] = array("LIKE", '%'.input('post.code').'%');
+        }
+        if( !empty(input('post.date_value_0')) && !empty(input('post.date_value_1')) ){
+            $where['REG_TIME'] = array('BETWEEN',array(input('post.date_value_0'),input('post.date_value_1')));
+        }
+        $this->_where = $where;
+        
         parent::list();
     }
     

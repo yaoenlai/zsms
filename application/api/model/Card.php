@@ -50,10 +50,12 @@ class Card extends Model
                 $insert_bak['C_DEPARTMENT']     = $this->_postData['c_department'];
                 $insert_bak['AREA']             = $this->_postData['area'];
                 $insert_bak['NOW_ADDRESS']      = $this->_postData['now_address'];
+                $insert_bak['NOW_AREA']         = $this->_postData['now_area'];
                 $insert_bak['ENTRANCE']         = $this->_postData['entrance'];
                 $insert_bak['TYPE']             = $this->_postData['peo_type'];
                 $insert_bak['FRONT_IMG']        = $this->_postData['front_img'];
                 $insert_bak['OPPOSITE_IMG']     = $this->_postData['opposite_img'];
+                $insert_bak['INSURANCE']        = $this->_postData['insurance'];
                 if( ($this->_postData['peo_type'] == '2') || ($this->_postData['peo_type'] == '3')){
                     $insert_bak['RESIDENCE_IMG']    = $this->_postData['residence_img'];
                 }
@@ -88,7 +90,7 @@ class Card extends Model
             $insert['STEP_STSTUS']  = 2;
             $insert['LR_TYPE']      = 1;
             
-            if( (db("card")->where([ "C_CODE"=>$find_card_info['C_CODE'] ])->count() == 0) && db("card")->insert($insert) ){
+            if( (db("card")->where([ "C_CODE"=>$find_card_info['C_CODE'],'REFUSE_STATUS' => '1' ])->count() == 0) && db("card")->insert($insert) ){
                 
                 $do_add = db('card')->where($insert)->value("ID");
                 if(!empty($do_add)){
@@ -135,9 +137,11 @@ class Card extends Model
             $insert_bak['C_DEPARTMENT']     = $this->_postData['c_department'];
             $insert_bak['AREA']             = $this->_postData['area'];
             $insert_bak['NOW_ADDRESS']      = $this->_postData['now_address'];
+            $insert_bak['NOW_AREA']         = $this->_postData['now_area'];
             $insert_bak['ENTRANCE']         = $this->_postData['entrance'];
             $insert_bak['FRONT_IMG']        = $this->_postData['front_img'];
             $insert_bak['OPPOSITE_IMG']     = $this->_postData['opposite_img'];
+//             $insert_bak['INSURANCE']        = $this->_postData['insurance'];
             if( ($this->_postData['peo_type'] == '2') || ($this->_postData['peo_type'] == '3')){
                 $insert_bak['RESIDENCE_IMG']    = $this->_postData['residence_img'];
             } 
@@ -147,7 +151,10 @@ class Card extends Model
                 $insert['C_NAME']           = $this->_postData['c_name'];
                 $insert['C_CODE']           = $this->_postData['c_code'];
                 $insert['PREPAY_ID']        = $this->_postData['prepay_id'];
-                $insert['HEAD_IMG']         = $this->_postData['head_img'];
+                if(!empty($this->_postData['head_img']))
+                {
+                    $insert['HEAD_IMG']         = $this->_postData['head_img'];
+                }
                 $insert['C_UPDATE_TIME']    = time();
                 $insert['EXAM_STATUS']      = 1;
                 if( db('card')->where($where)->update($insert) ){

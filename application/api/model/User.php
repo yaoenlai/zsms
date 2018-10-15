@@ -29,8 +29,9 @@ class User extends Model
             'phone'     => $data['user_phone'],
             'password'  => md5($data['password']),
         );
-        $find = $this->where($where)->find()->toArray();
-        if(!empty($find)){
+        $find2 = $this->where($where)->find();
+        if(!empty($find2)){
+            $find = $find2->toArray();
             if($find['IS_LOCK'] == '1'){
                 rjson($this->_addToken($find["ID"], $find["PHONE"]));
             } else {

@@ -199,7 +199,7 @@ class Social extends Common
         $where = [
             'U_ID'  => $this->_loginInfo['U_ID'],
         ];
-        $list = db('card')->where($where)->select();
+        $list = db('card')->where($where)->order('C_ADD_TIME DESC')->select();
         rjson($list);
     }
     
@@ -210,7 +210,7 @@ class Social extends Common
             'PREPAY_ID' => input('post.prepay_id'),
         ];
         $info = db('cardOrderBak')->where($where)->find();
-        $info = array_merge($info, getCItyName($info['AREA']));
+        $info = array_merge($info, getCItyName($info['NOW_AREA']));
         rjson($info);
     }
     

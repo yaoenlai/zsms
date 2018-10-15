@@ -176,6 +176,9 @@ class Retire extends Model
             ,'NAME' => $this->_postData["name"]
         ];
         $user_info = db('RetireInfo')->where($user_where)->find();
+        if(empty($user_info['XZ_CODE'])){
+            rjson('', '400', '退休用户 周期编码未设置');
+        }
         //获取周期
         $policy_where = [
             'INSURANCE'     => $user_info['XZ_CODE']
@@ -183,6 +186,9 @@ class Retire extends Model
             ,'PERIOD_END'   => array('EGT', date('m'))
         ];
         $policy_info = db('Policy')->where($policy_where)->find();
+        if(empty($policy_info)){
+            rjson('', '400', '退休用户 周期未设置');
+        }
         if($policy_info['PERIOD_BEGINYEAR'] == 0){
             $begin_date = date("Y", strtotime("-1 year")).$policy_info['PERIOD_BEGIN'];
         }
