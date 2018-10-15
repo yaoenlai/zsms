@@ -9,14 +9,21 @@ class Retire extends Common
         if(!empty(input('post.code'))){
             $where['CODE']  = array("LIKE", '%'.input('post.code').'%');
         }
-        if(!empty(input('post.is_pay'))){
-            $where['IS_PAY']  = array("EQ", input('post.is_pay'));
+        if(!empty(input('post.live_status'))){
+            if(input('post.live_status') == '00'){
+                $where['LIVE_STATUS']  = array("EQ", 0);
+            } else {
+                $where['LIVE_STATUS']  = array("EQ", input('post.live_status'));
+            }
         }
         if(!empty(input('post.xz_code'))){
             $where['INSURANCE']  = array("EQ", input('post.xz_code'));
         }
         if(!empty(input('post.zone_code'))){
             $where['AREA']  = array("EQ", input('post.zone_code'));
+        }
+        if( !empty(input('post.date_value_0')) && !empty(input('post.date_value_1')) ){
+            $where['CREATE_DATE'] = array('BETWEEN',array(input('post.date_value_0'),input('post.date_value_1')));
         }
         $this->_where = $where;
         

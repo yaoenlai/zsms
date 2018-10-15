@@ -4,7 +4,9 @@ namespace app\admin\controller;
 class Card extends Common
 {
     public function list(){
-        $where = [];
+        $where = [
+            'REFUSE_STATUS' => '1'
+        ];
         
         if(!empty(input('post.code'))){
             $where['C_CODE'] = array("LIKE", '%'.input('post.code').'%');
