@@ -9,8 +9,8 @@ class ComposerStaticInitc94282066b37db717bd33a803010a46a
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
-        'cc56288302d9df745d97c934d6a6e5f0' => __DIR__ . '/..' . '/topthink/think-queue/src/common.php',
         'ddc3cd2a04224f9638c5d0de6a69c7e3' => __DIR__ . '/..' . '/topthink/think-migration/src/config.php',
+        'cc56288302d9df745d97c934d6a6e5f0' => __DIR__ . '/..' . '/topthink/think-queue/src/common.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -28,9 +28,20 @@ class ComposerStaticInitc94282066b37db717bd33a803010a46a
         array (
             'app\\' => 4,
         ),
+        'Z' => 
+        array (
+            'Zend\\Escaper\\' => 13,
+        ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
+            'PhpOffice\\PhpWord\\' => 18,
+            'PhpOffice\\Common\\' => 17,
             'Phinx\\' => 6,
+        ),
+        'M' => 
+        array (
+            'Monolog\\' => 8,
         ),
     );
 
@@ -69,10 +80,34 @@ class ComposerStaticInitc94282066b37db717bd33a803010a46a
         array (
             0 => __DIR__ . '/../..' . '/application',
         ),
+        'Zend\\Escaper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-escaper/src',
+        ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
+        'PhpOffice\\PhpWord\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
+        ),
+        'PhpOffice\\Common\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/common/src/Common',
+        ),
         'Phinx\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-migration/phinx/src/Phinx',
         ),
+        'Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+    );
+
+    public static $classMap = array (
+        'PclZip' => __DIR__ . '/..' . '/pclzip/pclzip/pclzip.lib.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -80,6 +115,7 @@ class ComposerStaticInitc94282066b37db717bd33a803010a46a
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitc94282066b37db717bd33a803010a46a::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitc94282066b37db717bd33a803010a46a::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitc94282066b37db717bd33a803010a46a::$classMap;
 
         }, null, ClassLoader::class);
     }

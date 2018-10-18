@@ -87,10 +87,20 @@ class Connection extends BaseConnection
         return $info;
     }
 
-    public function getLastInsID($sequence = null){
+    /**
+     * 获取最近插入的ID
+     * @access public
+     * @param string  $sequence     自增序列名
+     * @return string
+     */
+    public function getLastInsID($sequence = null)
+    {
         return 1;
+        $pdo    = $this->linkID->query("select {$sequence}.currval as id from dual");
+        $result = $pdo->fetchColumn();
+        return $result;
     }
-    
+
     /**
      * SQL性能分析
      * @access protected

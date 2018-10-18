@@ -225,7 +225,19 @@ class Retire extends Model
                 case '30': $next_date = date('Y-m-d H:i:s',strtotime("+3 month"));break;
                 case '40': $next_date = date('Y-m-d H:i:s',strtotime("+1 month"));break;
             }
-            rjson('', '400', '已经成功认证,下次认证时间为['.$next_date.']');
+            //下次认证开始时间
+            switch ($policy_info['PERIOD_BEGINYEAR_NEXT']){
+                case '0' : $create_date = date("Y-", strtotime("-1 year")).$policy_info['PERIOD_BEGIN_NEXT'];break;
+                case '1' : $create_date = date("Y-").$policy_info['PERIOD_BEGIN_NEXT'];break;
+                case '2' : $create_date = date("Y-", strtotime("+1 year")).$policy_info['PERIOD_BEGIN_NEXT'];break;
+            }
+            //下次认证结束时间
+            switch ($policy_info['PERIOD_ENDYEAR_NEXT']){
+                case '0' : $end_date = date("Y-", strtotime("-1 year")).$policy_info['PERIOD_END_NEXT'];break;
+                case '1' : $end_date = date("Y-").$policy_info['PERIOD_END_NEXT'];break;
+                case '2' : $end_date = date("Y-", strtotime("+1 year")).$policy_info['PERIOD_END_NEXT'];break;
+            }
+            rjson('', '400', "已经成功认证,下次认证时间为:{$create_date}-{$end_date}");
         } else {
             return $retire_info;
         }

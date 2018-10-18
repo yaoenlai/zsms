@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 class Card extends Common
 {
+    
     public function list(){
         $where = [
             'REFUSE_STATUS' => '1'
@@ -43,6 +44,36 @@ class Card extends Common
             if(!empty($data['refuse_status'])){
                 $save['REFUSE_STATUS'] = 2;
             }
+        }
+        if($data['exam_status'] == '3'){
+
+            $info = db('Card2')->where(['ID'=>$data["ID"]])->find();
+            //实例化, 参数传入模板文件地址
+            $templateProcessor = new TemplateDocx('static/demo.docx');
+            //替换(设置)变量值，我在测试的时候替换的字符比较长，这里缩短了
+            $templateProcessor->setValue('ID', $info['ID']);
+            $templateProcessor->setValue('C_CODE', $info['C_CODE']);
+            $templateProcessor->setValue('C_NAME', $info['C_NAME']);
+            $templateProcessor->setValue('C_SEX', $info['C_SEX']);
+            $templateProcessor->setValue('C_NATION', $info['C_NATION']);
+            $templateProcessor->setValue('C_BIRTHDAY', $info['C_BIRTHDAY']);
+            $templateProcessor->setValue('C_PHONE', $info['C_PHONE']);
+            $templateProcessor->setValue('C_END_TIME', $info['C_END_TIME']);
+            $templateProcessor->setValue('C_ADDRESS', $info['C_ADDRESS']);
+            $templateProcessor->setValue('GUARDIAN_NAME', $info['GUARDIAN_NAME']);
+            $templateProcessor->setValue('GUARDIAN_CARD', $info['GUARDIAN_CARD']);
+            
+            $templateProcessor->setImg('FRONT_IMG', array(
+                'src'=>ROOT_PATH.'public'.$info['FRONT_IMG'],
+                'size' => array( 150, 150 ) //图片大小，单位px
+            ));
+            $templateProcessor->setImg('OPPOSITE_IMG', array(
+                'src'=>ROOT_PATH.'public'.$info['OPPOSITE_IMG'],
+                'size' => array( 150, 150 ) //图片大小，单位px
+            ));
+            
+            //保存文件
+            $templateProcessor->saveAs('doc/'.$info['C_CODE'].'_'.time().'.docx');
         }
         if($data['exam_status'] == '6'){
             $email_save = [

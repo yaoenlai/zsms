@@ -124,7 +124,7 @@ class Builder
         $result = [];
         foreach ($data as $key => $val) {
             $item = $this->parseKey($key);
-            if (is_array($val) && isset($val[0]) && 0 === strpos($val[0], '$')) {
+            if (is_array($val) && isset($val[0]) && is_string($val[0]) && 0 === strpos($val[0], '$')) {
                 $result[$val[0]][$item] = $this->parseValue($val[1], $key);
             } else {
                 $result['$set'][$item] = $this->parseValue($val, $key);
@@ -354,6 +354,8 @@ class Builder
     public function insertAll($dataSet, $options = [])
     {
         $bulk = new BulkWrite;
+
+        $this->insertId = [];
         foreach ($dataSet as $data) {
             // 分析并处理数据
             $data = $this->parseData($data, $options);
@@ -460,6 +462,7 @@ class Builder
             'aggregate'    => $options['table'],
             'allowDiskUse' => true,
             'pipeline'     => $pipeline,
+            'cursor'       => new \stdClass,
         ];
 
         foreach (['explain', 'collation', 'bypassDocumentValidation', 'readConcern'] as $option) {
@@ -498,6 +501,7 @@ class Builder
             'aggregate'    => $options['table'],
             'allowDiskUse' => true,
             'pipeline'     => $pipeline,
+            'cursor'       => new \stdClass,
         ];
 
         foreach (['explain', 'collation', 'bypassDocumentValidation', 'readConcern'] as $option) {

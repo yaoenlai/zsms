@@ -37,7 +37,7 @@ class Card extends Model
                 $insert_bak['U_ID']             = $user_info['ID'];
                 $insert_bak['PREPAY_ID']        = $number;
                 $insert_bak['U_NAME']           = $user_info['USERNAME'];
-                $insert_bak['U_CARDS']          = $user_info['PHONE'];
+                $insert_bak['U_CARDS']          = $user_info['CODE'];
                 $insert_bak['C_NAME']           = $this->_postData['c_name'];
                 $insert_bak['C_CODE']           = $this->_postData['c_code'];
                 $insert_bak['C_SEX']            = $this->_postData['c_sex'];
