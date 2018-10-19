@@ -123,10 +123,10 @@ class  Publics extends Controller
         curl_close($ch);
         
         //删除图片
-        unlink(ROOT_PATH.'/public/'.input('post.image'));
-        if(!empty($data['image_ref1'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref1'));
-        if(!empty($data['image_ref2'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref2'));
-        if(!empty($data['image_ref3'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref3'));
+//         unlink(ROOT_PATH.'/public/'.input('post.image'));
+//         if(!empty($data['image_ref1'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref1'));
+//         if(!empty($data['image_ref2'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref2'));
+//         if(!empty($data['image_ref3'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref3'));
         
         echo $output;
     }
@@ -138,7 +138,7 @@ class  Publics extends Controller
         
         $data = $this->http_url($url, json_encode($post_data));
         
-        $image_path = './image/'.$post_data['file_name'].'.jpg';
+        $image_path = '/image/'.$post_data['file_name'].'.jpg';
         file_put_contents($image_path, $data);
         
         rjson($image_path);
