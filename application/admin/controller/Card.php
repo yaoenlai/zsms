@@ -62,16 +62,17 @@ class Card extends Common
             $templateProcessor->setValue('C_ADDRESS', $info['C_ADDRESS']);
             $templateProcessor->setValue('GUARDIAN_NAME', $info['GUARDIAN_NAME']);
             $templateProcessor->setValue('GUARDIAN_CARD', $info['GUARDIAN_CARD']);
-            
-            $templateProcessor->setImg('FRONT_IMG', array(
-                'src'=>ROOT_PATH.'public'.$info['FRONT_IMG'],
-                'size' => array( 150, 150 ) //图片大小，单位px
-            ));
-            $templateProcessor->setImg('OPPOSITE_IMG', array(
-                'src'=>ROOT_PATH.'public'.$info['OPPOSITE_IMG'],
-                'size' => array( 150, 150 ) //图片大小，单位px
-            ));
-            
+            //大于16岁的才有身份证
+            if($info['TYPE'] == '1'){
+                $templateProcessor->setImg('FRONT_IMG', array(
+                    'src'=>ROOT_PATH.'public'.$info['FRONT_IMG'],
+                    'size' => array( 150, 150 ) //图片大小，单位px
+                ));
+                $templateProcessor->setImg('OPPOSITE_IMG', array(
+                    'src'=>ROOT_PATH.'public'.$info['OPPOSITE_IMG'],
+                    'size' => array( 150, 150 ) //图片大小，单位px
+                ));
+            }
             //保存文件
             $templateProcessor->saveAs('doc/'.$info['C_CODE'].'_'.time().'.docx');
         }
