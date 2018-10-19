@@ -138,10 +138,10 @@ class  Publics extends Controller
         
         $data = $this->http_url($url, json_encode($post_data));
         
-        $image_path = '/image/'.$post_data['file_name'].'.jpg';
+        $image_path = './image/'.$post_data['file_name'].'.jpg';
         file_put_contents($image_path, $data);
         
-        rjson($image_path);
+        rjson(trim($image_path,'.'));
     }
        
     public function http_url($url,$data=null){
