@@ -22,8 +22,8 @@ class Card extends Model
         Db::startTrans();
         try {
             /*订单信息开始*/
-            $number = date('YmdHis').rand(10000000, 99999900).$this->_postData['token_phone'];
-            $numbers = date('YmdHis').rand(10000000, 99999900);
+            $number = date('YmdHis').rand(1000000, 9999990).$this->_postData['token_phone'];
+            $numbers = date('YmdHis').rand(1000000, 9999990);
             $insert['U_ID']         = $user_info['ID'];
             $insert['PREPAY_ID']    = $number;
             $insert['NUMBERS']      = $numbers;
@@ -177,8 +177,8 @@ class Card extends Model
         Db::startTrans();
         try {
             /*订单信息开始*/
-            $number = date('YmdHis').rand(10000000, 99999900).$this->_postData['token_phone'];
-            $numbers = date('YmdHis').rand(10000000, 99999900);
+            $number = date('YmdHis').rand(1000000, 9999990).$this->_postData['token_phone'];
+            $numbers = date('YmdHis').rand(1000000, 9999990);
             $insert['U_ID']         = $u_id;
             $insert['PREPAY_ID']    = $number;
             $insert['NUMBERS']      = $numbers;

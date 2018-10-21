@@ -45,7 +45,7 @@ class Social extends Common
             }
         }
         
-        $userInfo = db('user')->field("id,username,phone")->where([ "id"=>$this->_loginInfo["U_ID"] ])->find();
+        $userInfo = db('user')->field("id,username,phone,code")->where([ "id"=>$this->_loginInfo["U_ID"] ])->find();
         (new Card())->addOrder($userInfo);
     }
 
