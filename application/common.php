@@ -104,3 +104,33 @@ function str_rand($length = 32, $char = '0123456789abcdefghijklmnopqrstuvwxyzABC
     
     return $string;
 }
+
+/** 
+ * 获取源图片
+ * @param string $code 身份证号码
+ * @param string $xz_code 险种编码
+ * @param string $zone_code 参保区域编码
+ *  */
+function get_source_img($code){
+    
+    $path = "./image/source_img/{$code}.jpg";
+    
+    $where = [
+        'CODE'    => $code
+    ];
+    $info = db("RetireImg")->where($where)->find();
+    if(empty($info)){
+        return false;
+    }
+    $obj = stream_get_contents($info['IMG']);
+    //创建文件夹
+    if(!file_exists(dirname($path))){
+        mkdir(dirname($path));
+    }
+    
+    if(file_put_contents($path, $obj)){
+        return trim($path,'.');
+    } else {
+        return false;
+    }
+}

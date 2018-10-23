@@ -173,7 +173,7 @@ class Card extends Model
     }
     
     //社保邮寄订单
-    public function addMailOrder($u_id){
+    public function addMailOrder($u_id, $cardInfo){
         Db::startTrans();
         try {
             /*订单信息开始*/
@@ -193,7 +193,10 @@ class Card extends Model
                     'EXPRESS_ID'    => $this->_postData['express_id'],
                     'PREPAY_ID'     => $number,
                     'CARD_ID'       => $this->_postData['card_id'],
-                    'ADDTIME'       => date("Y-m-d H:i:s", time()),
+                    'ADDTIME'       => time(),
+                    'ADD_DATE'      => date("Y-m-d H:i:s", time()),
+                    'C_CODE'        => $cardInfo['C_CODE'],
+                    'C_NAME'        => $cardInfo['C_NAME'],
                 ];
                 if ( db('CardMail')->insert($insert_mail) ){
                     Db::commit();

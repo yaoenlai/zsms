@@ -19,6 +19,9 @@ class Retire extends Common
         if(!empty(input('post.xz_code'))){
             $where['INSURANCE']  = array("EQ", input('post.xz_code'));
         }
+        if(!empty(input('post.type'))){
+            $where['TYPE']  = array("EQ", input('post.type'));
+        }
         if(!empty(input('post.zone_code'))){
             $where['AREA']  = array("EQ", input('post.zone_code'));
         }
@@ -51,14 +54,26 @@ class Retire extends Common
     public function getDetail(){
         $data = [];
         //获取基本信息
-        $data['info'] = db('RetireInfo')->alias("ri")
-                        ->field("ri.*,z.ZONE_NAME")
-                        ->join('sb_zone z', 'z.ZONE_CODE = ri.ZONE_CODE', 'LEFT')
-                        ->where(['CODE'=>input('post.code')])->find();
+        $data['info'] = db('RetireInfo')->where(['CODE'=>input('post.code')])->find();
         //获取活体对比记录
         $data['face'] = db("RetireFace")->where(['PID'=>input('post.id')])->select();
         //获取详细信息
         $data['detail'] = db('Retire')->where(['ID'=>input('post.id')])->find();
+        
         rjson($data);
+    }
+    
+    public function authentication(){
+        $where = [
+            'ID'    => input('post.ID')
+        ];
+        $save_data = [
+            'LIVE_STATUS'   => 1
+        ];
+        if( db("Retire")->where($where)->update($save_data) ){
+            rjson('手动认证通过');
+        } else {
+            rjson_error('未知错误');
+        }
     }
 }

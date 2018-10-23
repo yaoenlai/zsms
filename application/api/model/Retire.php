@@ -36,8 +36,11 @@ class Retire extends Model
                     ,'PREPAY_ID'            => $number
                     ,'CODE'                 => $this->_postData['code']
                     ,'NAME'                 => $this->_postData['name']
+                    ,'INSURANCE'            => $this->_postData['xz_code']
+                    ,'AREA'                 => $this->_postData['zone_code']
                     ,'CYC'                  => date("Ym")
                     ,'CREATE_DATE'          => date('Y-m-d H:i:s')
+                    ,'CREATE_TIME'          => time()
                     ,'AUTHENTICATION_STATUS'=> '3'
                 ];
                 if(! db("Retire")->insert($insert_data) ){
@@ -170,18 +173,11 @@ class Retire extends Model
     }
     
     public function validatePolicy(){
-        //获取用户基本信息
-        $user_where = [
-            'CODE'  => $this->_postData['code']
-            ,'NAME' => $this->_postData["name"]
-        ];
-        $user_info = db('RetireInfo')->where($user_where)->find();
-        if(empty($user_info['XZ_CODE'])){
-            rjson('', '400', '退休用户 周期编码未设置');
-        }
+
         //获取周期
         $policy_where = [
-            'INSURANCE'     => $user_info['XZ_CODE']
+            'INSURANCE'     => $this->_postData['xz_code']
+            ,"ZONE"         => $this->_postData['zone_code']
             ,"PERIOD_BEGIN" => array('ELT', date('m'))
             ,'PERIOD_END'   => array('EGT', date('m'))
         ];
@@ -189,6 +185,7 @@ class Retire extends Model
         if(empty($policy_info)){
             rjson('', '400', '退休用户 周期未设置');
         }
+        //认证开始时间
         if($policy_info['PERIOD_BEGINYEAR'] == 0){
             $begin_date = date("Y", strtotime("-1 year")).$policy_info['PERIOD_BEGIN'];
         }
@@ -198,7 +195,7 @@ class Retire extends Model
         if($policy_info['PERIOD_BEGINYEAR'] == 2){
             $begin_date = date("Y", strtotime("+1 year")).$policy_info['PERIOD_BEGIN'];
         }
-        
+        //认证结束时间
         if($policy_info['PERIOD_ENDYEAR'] == 0){
             $end_date = date("Y", strtotime("-1 year")).$policy_info['PERIOD_END'];
         }
@@ -210,21 +207,16 @@ class Retire extends Model
         }
         //判断是否已认证
         $retire_where = [
-            'CODE'  => $this->_postData['code']
-            ,'NAME' => $this->_postData["name"]
-            ,'CYC'  => array('BETWEEN', array($begin_date,$end_date))
+            'CODE'          => $this->_postData['code']
+            ,'NAME'         => $this->_postData["name"]
+            ,'INSURANCE'    => $this->_postData['xz_code']
+            ,'AREA'         => $this->_postData['zone_code']
+            ,'CYC'          => array('BETWEEN', array($begin_date,$end_date))
         ];
         $retire_info = db("Retire")->where($retire_where)->find();
         if(empty($retire_info)){
             return false;
         } else if($retire_info['FACE_STATUS'] == '1'){
-            switch ($policy_info['PERIOD'])
-            {
-                case '10': $next_date = date('Y-m-d H:i:s',strtotime("+12 month"));break;
-                case '20': $next_date = date('Y-m-d H:i:s',strtotime("+6 month"));break;
-                case '30': $next_date = date('Y-m-d H:i:s',strtotime("+3 month"));break;
-                case '40': $next_date = date('Y-m-d H:i:s',strtotime("+1 month"));break;
-            }
             //下次认证开始时间
             switch ($policy_info['PERIOD_BEGINYEAR_NEXT']){
                 case '0' : $create_date = date("Y-", strtotime("-1 year")).$policy_info['PERIOD_BEGIN_NEXT'];break;

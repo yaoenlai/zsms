@@ -28,4 +28,15 @@ class RetireInfo extends Common
         
         parent::list();
     }
+    
+    public function get_source_img(){
+        if(empty(input('post.code'))) rjson_error('身份证号码为空');
+            
+        $path = get_source_img( input('post.code') );
+        if(!empty($path)){
+            rjson($path);
+        } else {
+            rjson_error('获取源照片失败');
+        }
+    }
 }

@@ -246,8 +246,10 @@ class Social extends Common
             'ID'            => $data['card_id'],
             'EXAM_STATUS'   => 3,
         ];
-        if( db("Card")->where($where)->count() ){
-            (new Card())->addMailOrder($this->_loginInfo['U_ID']);
+        
+        $cardInfo = db("Card")->where($where)->find();
+        if( !empty($cardInfo) ){
+            (new Card())->addMailOrder($this->_loginInfo['U_ID'], $cardInfo);
         } else {
             rjson('', '400', '社保号有问题');
         }
