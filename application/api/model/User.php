@@ -92,7 +92,26 @@ class User extends Model
             $token['TOKEN'] = md5($phone.$time);
             db('app_token')->insert($token);
         }
+        $this->_addLoginLog($uid);
         $find_new_token = db("app_token")->where(["u_id"=>$uid,"phone"=>$phone])->find();
         return $find_new_token;
+    }
+    
+    //添加登录日志
+    private function _addLoginLog($uid){
+        $data = [
+            'PID'           => $uid
+            ,'PHONE'        => input('post.user_phone')
+            ,'PHONE_MODEL'  => input('post.phone_model')
+            ,'IP'           => getIp()
+            ,'CREATE_DATE'  => date('Y-m-d H:i:s', time())
+            ,'CREATE_TIME'  => time()
+            ,'LOGIN_TYPE'   => input('post.login_type')
+        ];
+        if( db("UserLoginLog")->insert($data) ){
+            return true;
+        } else {
+            return false;
+        }
     }
 }

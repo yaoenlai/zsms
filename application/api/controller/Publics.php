@@ -92,6 +92,12 @@ class  Publics extends Controller
         rjson($list);
     }
     
+    //获取设置费用
+    public function get_set_price(){
+        $list = get_price();
+        rjson($list);
+    }
+    
     public function jsonp(){
         $url = input('post.url');
         $data = input('post.');

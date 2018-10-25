@@ -72,3 +72,19 @@ function user_msg($uid,$title,$content,$type){
     );
     return $adds;
 }
+/* 
+ * 获取价格
+ *  */
+function get_price($type=''){
+    $where = [];
+    $list = db('SetPrice')->where($where)->select();
+    if(!empty($type)){
+        foreach ($list as $key=>$value){
+            if($value['TYPE'] == $type){
+                return $value['PRICE'];
+            }
+        }
+    } else {
+        return $list;
+    }
+}

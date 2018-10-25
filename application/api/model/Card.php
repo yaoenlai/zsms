@@ -85,6 +85,7 @@ class Card extends Model
             $insert['PREPAY_ID']= $this->_postData['prepay_id'];
             
             $insert['C_ADD_TIME']   = time();
+            $insert['C_ADD_DATE']   = date("Y-m-d H:i:s", time());
             $insert['IS_PAY']       = 1;
             $insert['PAY_TIME']     = time();
             $insert['STEP_STSTUS']  = 2;

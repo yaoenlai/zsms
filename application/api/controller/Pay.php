@@ -8,6 +8,7 @@ use Lib\wx\WechatAppPay;
 class Pay
 {
  
+    //暂时废弃
     public function pay_type(){
         $data = input('post.');
         
@@ -38,9 +39,9 @@ class Pay
         $request = new AlipayTradeAppPayRequest(); 
         //SDK已经封装掉了公共参数，这里只需要传入业务参数
         switch ($data['total_amount_type']){
-            case '1':$data['total_amount'] = config('price.card');break;
-            case '2':$data['total_amount'] = config('price.mail');break;
-            case '3':$data['total_amount'] = config('price.retire');break;
+            case '1':$data['total_amount'] = get_price('1');break;
+            case '2':$data['total_amount'] = get_price('2');break;
+            case '3':$data['total_amount'] = get_price('3');break;
             default:$data['total_amount'] = "0.01";
         }
         $bizcontent = "
@@ -69,9 +70,9 @@ class Pay
         $WeChat = new WechatAppPay();
         
         switch ($data['total_fee_type']){
-            case '1':$data['total_fee'] = config('price.card');break;
-            case '2':$data['total_fee'] = config('price.mail');break;
-            case '3':$data['total_fee'] = config('price.retire');break;
+            case '1':$data['total_fee'] = get_price('1');break;
+            case '2':$data['total_fee'] = get_price('2');break;
+            case '3':$data['total_fee'] = get_price('3');break;
             default:$data['total_fee'] = "0.01";
         }
         $param['total_fee'] = $data['total_fee']*100;

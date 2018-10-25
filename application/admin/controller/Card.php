@@ -100,12 +100,25 @@ class Card extends Common
     public function detail(){
         
         $info = [];
+        
         $info['card_info'] = db('Card')->where(['ID' => input("post.card_id")])->find();
+        //详细信息
         $info['card_detail'] = db("CardOrderBak")->where(['PREPAY_ID' => input("post.prepay_id")])->find();
-        if($info['card_detail']['TYPE'] != '1'){
-            
+        if($info['card_detail']['C_SEX'] == '1'){
+            $info['card_detail']['C_SEX_NAME'] = '男';
+        } elseif ($info['card_detail']['C_SEX'] == '2'){
+            $info['card_detail']['C_SEX_NAME'] = '女';
         }
-        $info['guardian_detail'] = db('guardian')->where(['PID' => input("post.card_id")])->find();
+        if($info['card_detail']['TYPE'] != '1'){
+            //监督人信息
+            $info['guardian_detail'] = db('guardian')->where(['PID' => input("post.card_id")])->find();
+            if($info['guardian_detail']['GUARDIAN_SEX'] == '1'){
+                $info['guardian_detail']['GUARDIAN_SEX_NAME'] = '男';
+            } elseif ($info['guardian_detail']['GUARDIAN_SEX'] == '2'){
+                $info['guardian_detail']['GUARDIAN_SEX_NAME'] = '女';
+            }
+        }
+        
         rjson($info);
     }   
     
@@ -128,6 +141,13 @@ class Card extends Common
     public function getZone(){
         $where = [];
         $list = db("zone")->where($where)->select();
+        rjson($list);
+    }
+    
+    //获取民族
+    public function getMz(){
+        $where = [];
+        $list = db("Mz")->where($where)->select();
         rjson($list);
     }
 }
