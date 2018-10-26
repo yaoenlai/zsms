@@ -13,6 +13,7 @@ class User extends Model
         $insert_user['PHONE'] = $data['user_phone'] ;
         $insert_user['PASSWORD'] = md5($data['password']);
         $insert_user['REG_TIME'] = time() ;
+        $insert_user['REG_DATE'] = date("Y-m-d H:i:s", time());
         $insert_user['REG_TYPE'] = $data['reg_type'] ;
         $insert_user['REG_IP'] = getIp() ;
         $insert_user['TYPE'] = 1 ;

@@ -16,6 +16,11 @@ class User extends Common
         if(!empty(input('post.code'))){
             $where['CODE'] = array("LIKE", '%'.input('post.code').'%');
         }
+        if (!empty(input('post.user_type'))){
+            $where['USER_TYPE'] = array("EQ", input('post.user_type'));
+        } else if (input('post.user_type') == '0'){
+            $where['USER_TYPE'] = array("EQ", '0');
+        }
         if( !empty(input('post.date_value_0')) && !empty(input('post.date_value_1')) ){
             $where['REG_TIME'] = array('BETWEEN',array(input('post.date_value_0'),input('post.date_value_1')));
         }
@@ -30,6 +35,14 @@ class User extends Common
             "ID"    => $id,
         ];
         $info = db("User")->where($where)->find();
+        if($info['SEX'] == '1'){
+            $info['SEX_NAME'] = '男';
+        } else if ($info['SEX'] == '2'){
+            $info['SEX_NAME'] = '女';
+        } else {
+            $info['SEX_NAME'] = '保密';
+        }
+        $info['NATION_NAME'] = db("Mz")->where(['MZ_CODE'=>$info['NATION']])->value('NAME');
         rjson($info);
     }
     

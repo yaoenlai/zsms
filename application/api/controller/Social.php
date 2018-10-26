@@ -14,16 +14,25 @@ class Social extends Common
     
     //验证是否申请过社保卡(开始申请)
     public function card_validate(){
-        //验证用户扫描的身份证是否已经申请过社保卡
-        $where = array(
-            'C_CODE'        => input('post.idcard'),
-            'REFUSE_STATUS' => '1'
-        );
-        if(db("card")->where($where)->count()){
-            rjson('', '400', '此身份信息已经有办理/申请记录,不可继续申请了!');
-        } else {
-            rjson('此身份信息可以录入');
-        }
+        
+        $return = (new Card())->card_validate();
+        
+        switch ($return['status']){
+            case '1':
+                rjson('此身份证未录入信息，可以录入');
+                break;
+            case '2':
+                rjson(['prepay_id'=>$return['prepay_id']], '201', '此身份证未支付');
+                break;
+            case '3':
+                rjson(['card_id'=>$return['card_id']], '202', '此身份证未拍照');
+                break;
+            case '4':
+                rjson(['card_id'=>$return['card_id']], '203', '证件照审核不通过');
+                break;
+            default:
+                rjson('', '400', '此身份信息已经有办理/申请记录,不可继续申请了!');
+        }       
     }
     
     //生成临时订单
@@ -70,7 +79,7 @@ class Social extends Common
     //支付社保订单
     private function pay_card_order(){
         $where = array(
-            "prepay_id" => input('post.prepay_id'),
+            "prepay_id" => input('post.prepay_id')
         );
         $info = db("CardOrderBak")->where($where)->find();
         if(!empty($info)){
@@ -197,7 +206,8 @@ class Social extends Common
     //获取已提交社保列表
     public function card_list(){
         $where = [
-            'U_ID'  => $this->_loginInfo['U_ID'],
+            'U_ID'      => $this->_loginInfo['U_ID'],
+            'IS_LOCK'   => '1',
         ];
         $list = db('card')->where($where)->order('C_ADD_TIME DESC')->select();
         rjson($list);
@@ -235,23 +245,6 @@ class Social extends Common
             (new Card())->cardEdit();
         } else {
             rjson('', '400', '该社保状态不能修改');
-        }
-    }
-
-    //社保邮寄
-    public function card_mail(){
-        
-        $data = input('post.');
-        $where = [
-            'ID'            => $data['card_id'],
-            'EXAM_STATUS'   => 3,
-        ];
-        
-        $cardInfo = db("Card")->where($where)->find();
-        if( !empty($cardInfo) ){
-            (new Card())->addMailOrder($this->_loginInfo['U_ID'], $cardInfo);
-        } else {
-            rjson('', '400', '社保号有问题');
         }
     }
 }
