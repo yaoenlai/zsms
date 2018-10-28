@@ -9,6 +9,7 @@ use think\Controller;
 class Common extends Controller
 {
     protected $admin_id;        //登录用户ID
+    protected $group_id;        //用户组ID
     protected $_where=[];       //查询条件
     protected $_order='ADDTIME DESC';   //排序       
     
@@ -21,6 +22,12 @@ class Common extends Controller
                 $admin_id = db("AdminSession")->where(['ADMIN_S_ID'=>$Auth])->value('ADMIN_ID');
                 if(!empty($admin_id)){
                     $this->admin_id=$admin_id;
+                    $group_id = db("Admin")->where(['ADMIN_ID'=>$admin_id])->value("GROUP_ID");
+                    if(!empty($group_id)){
+                        $this->group_id = $group_id;
+                    } else {
+                        rjson_error('用户组信息不存在');
+                    }
                 } else {
                     rjson_error('用户信息不存在');
                 }
