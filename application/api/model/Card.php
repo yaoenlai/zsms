@@ -18,7 +18,7 @@ class Card extends Model
     }
     
     //社保订单验证
-    public function card_validate(){
+    public function card_validate($u_id){
         //验证社保号是否已提交
         $where = [
             'C_CODE'    => input('post.idcard')
@@ -49,7 +49,15 @@ class Card extends Model
         if( (!empty($card_info)) && ($card_info['REFUSE_STATUS'] == '2') ){
             return ['status'=>'4', 'card_id'=>$card_info['ID']];
         }
-        return ['status'=>'5'];
+        //验证社保办理数量
+        $where = [
+            'U_ID'    => $u_id
+            ,'IS_LOCK'  => '1'
+        ];
+        if( db('Card')->where($where)->count() >= 3){
+            return ['status'=> '5'];
+        }
+        return ['status'=>'detail'];
     }
     
     //社保订单
@@ -74,12 +82,19 @@ class Card extends Model
                     'C_CODE'    => $this->_postData['c_code']
                 ];
                 db("CardOrderBak")->where($where)->update(['IS_LOCK'=>'0']);
+                db("Card")->where($where)->update(['IS_LOCK'=>'0']);
+                
+                $insert_info = [
+                    'U_ID'          => $user_info['ID']
+                    ,'PREPAY_ID'    => $number
+                    ,'U_NAME'       => $user_info['USERNAME']
+                    ,'U_CARDS'      => $user_info['CODE']
+                    ,'C_NAME'       => $this->_postData['c_name']
+                    ,'C_CODE'       => $this->_postData['c_code']
+                ];
+                
                 /*即将录入的个人信息的存储*/
-                $insert_bak['U_ID']             = $user_info['ID'];
-                $insert_bak['PREPAY_ID']        = $number;
-                $insert_bak['U_NAME']           = $user_info['USERNAME'];
-                $insert_bak['U_CARDS']          = $user_info['CODE'];
-                $insert_bak['C_NAME']           = $this->_postData['c_name'];
+                $insert_bak                     = $insert_info;
                 $insert_bak['C_CODE']           = $this->_postData['c_code'];
                 $insert_bak['C_SEX']            = $this->_postData['c_sex'];
                 $insert_bak['C_BIRTHDAY']       = $this->_postData['c_birthday'];
@@ -101,13 +116,23 @@ class Card extends Model
                     $insert_bak['RESIDENCE_IMG']    = $this->_postData['residence_img'];
                 }
                 if( db('CardOrderBak')->insert($insert_bak) ){
-                    Db::commit(); 
-                    rjson(array("prepay_id"=>$number,"numbers"=>$numbers));
+                    
+                    /* 即将录入的社保基础信息的存储 */
+                    $insert_card                = $insert_info;
+                    $insert_card['C_ADD_TIME']  = time();
+                    $insert_card['C_ADD_DATE']  = date("Y-m-d H:i:s", time());
+                    if( db('Card')->insert($insert_card) ){
+                        
+                        Db::commit(); 
+                        rjson(array("prepay_id"=>$number,"numbers"=>$numbers));
+                    } else {
+                        exception(showRegError(-16).'card');
+                    }
                 } else {
-                    exception(showRegError(-16));
+                    exception(showRegError(-16).'card_bak');
                 }
             } else {
-                exception(showRegError(-16));
+                exception(showRegError(-16).'order');
             }
         } catch (\Exception $e){
             Db::rollback();
@@ -118,46 +143,43 @@ class Card extends Model
     public function addCard($find_card_info){
         Db::startTrans();
         try {
-            $insert['U_ID']     = $find_card_info['U_ID'];
-            $insert['U_NAME']   = $find_card_info['U_NAME'];
-            $insert['U_CARDS']  = $find_card_info['U_CARDS'];
-            $insert['C_NAME']   = $find_card_info['C_NAME'];
-            $insert['C_CODE']   = $find_card_info['C_CODE'];
-            $insert['PREPAY_ID']= $this->_postData['prepay_id'];
             
-            $insert['C_ADD_TIME']   = time();
-            $insert['C_ADD_DATE']   = date("Y-m-d H:i:s", time());
-            $insert['IS_PAY']       = 1;
-            $insert['PAY_TIME']     = time();
-            $insert['STEP_STSTUS']  = 2;
-            $insert['LR_TYPE']      = 1;
-            /* 废弃掉图片审核失败的 */
-            db("card")->where([ "C_CODE"=>$find_card_info['C_CODE'],'REFUSE_STATUS' => '2' ])->update(['IS_LOCK'=>'0']);
-            
-            if( (db("card")->where([ "C_CODE"=>$find_card_info['C_CODE'],'IS_LOCK' => '1' ])->count() == 0) && db("card")->insert($insert) ){
-                
-                $do_add = db('card')->where($insert)->value("ID");
-                if(!empty($do_add)){
+            /* 获取社保基础信息 */
+            $where = [
+                'PREPAY_ID' => $this->_postData['prepay_id']
+                ,'IS_LOCK'  => '1'
+            ];
+            $card_info = db("Card")->where($where)->find();
+            if(!empty($card_info)){
+                /* 修改社保基础信息 */
+                $save = [
+                    'IS_PAY'    => '1'
+                    ,'PAY_TIME' => time()
+                    ,'LR_TYPE'  => '1'
+                ];
+                if( db('Card')->where($where)->update($save) ){
                     /* 修改已添加邮寄的社保号 */
                     db('CardMail')->where(['C_CODE'=>$find_card_info['C_CODE'], 'TYPE'=>'1'])->update(['CARD_ID'=>$do_add]);
                     
                     $save['STATUS']         = 1;
-                    $save['PID']            = $do_add;
+                    $save['PID']            = $card_info["ID"];
                     $save['FINISH_TIME']    = time();
                     $save['FINISH_DATE']    = date("Y-m-d H:i:s");
                     $save['PRICE']          = $this->_postData['price'];
                     $save['PAYMENT']        = $this->_postData['payment'];
-                    $do_save = db("order")->where(["prepay_id"=>$this->_postData['prepay_id'] ])->update($save);
-                    $back['card_id'] = $do_add;
-                    
-                    Db::commit();
-                    rjson(array('card_id'=>$do_add), '200', '支付成功');
+                    if( db("order")->where(["prepay_id"=>$this->_postData['prepay_id'] ])->update($save) ){
+                        
+                        Db::commit();
+                        rjson(array('card_id'=>$card_info["ID"]), '200', '支付成功');
+                    } else {
+                        exception('支付修改出错');
+                    }
                 } else {
-                    exception('card_id获取失败');
+                    exception('修改社保信息出错');
                 }
             } else {
-                exception(showRegError(-16).'，请检查是否已录入');
-            }     
+                exception('card_id获取失败');
+            }    
         } catch (\Exception $e){
             Db::rollback();
             rjson('', '400', $e->getMessage());

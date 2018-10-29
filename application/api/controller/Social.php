@@ -15,7 +15,7 @@ class Social extends Common
     //验证是否申请过社保卡(开始申请)
     public function card_validate(){
         
-        $return = (new Card())->card_validate();
+        $return = (new Card())->card_validate($this->_loginInfo['U_ID']);
         
         switch ($return['status']){
             case '1':
@@ -29,6 +29,9 @@ class Social extends Common
                 break;
             case '4':
                 rjson(['card_id'=>$return['card_id']], '203', '证件照审核不通过');
+                break;
+            case '6':
+                rjson('', '204', '该用户办理次数已达到3次');
                 break;
             default:
                 rjson('', '400', '此身份信息已经有办理/申请记录,不可继续申请了!');
@@ -132,6 +135,8 @@ class Social extends Common
             'GUARDIAN_ADDRESS'      => $data['guardian_address'],
             'GUARDIAN_START_TIME'   => strtotime($data['guardian_start_time']),
             'GUARDIAN_END_TIME'     => strtotime($data['guardian_end_time']),
+            'GUARDIAN_START_DATE'   => $data['guardian_start_time'],
+            'GUARDIAN_END_DATE'     => $data['guardian_end_time'],
             'GUARDIAN_RELATION'     => $data['guardian_relation'],
             'FRONT_IMG'             => $data['front_img'],
             'OPPOSITE_IMG'          => $data['opposite_img'],
