@@ -143,6 +143,7 @@ class Retires extends Common
             ,"TYPE"         => $data['type']
         ];
         if( db("Retire")->where($where)->update($save_data) ){
+            msg_add('退休认证', '退休认证采集完成', $this->_loginInfo['U_ID']);
             rjson('认证完成');
         } else {
             rjson('', '400', '认证错误');

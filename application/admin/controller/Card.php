@@ -36,6 +36,7 @@ class Card extends Common
     //修改状态
     public function status_edit(){
         $data = input('post.');
+        $u_id = db('Card')->where( ['ID'=>$data['ID']] )->value('U_ID');
         $save = [
             'EXAM_STATUS'=>$data['exam_status'],
         ];
@@ -44,6 +45,7 @@ class Card extends Common
             if(!empty($data['refuse_status'])){
                 $save['REFUSE_STATUS'] = 2;
             }
+            msg_add('社保卡办理', '社保卡办理审核不通过['.$data['exam_info'].']', $u_id);
         }
         if($data['exam_status'] == '3'){
 
@@ -75,6 +77,7 @@ class Card extends Common
             }
             //保存文件
             $templateProcessor->saveAs('doc/'.$info['C_CODE'].'_'.time().'.docx');
+            msg_add('社保卡办理', '社保卡办理审核通过', $u_id);
         }
         if($data['exam_status'] == '6'){
             $email_save = [
@@ -83,6 +86,7 @@ class Card extends Common
             if(! db("CardMail")->where(['CARD_ID'=>$data["ID"]])->update($email_save) ){
                 rjson("", "400", "订单号填写失败");
             }
+            msg_add('社保卡邮寄', '社保卡邮寄单号['.$data['express_num'].']', $u_id);
         }
         if($data['exam_status'] == '7'){
             if(! db("CardMail")->where(['CARD_ID'=>$data["ID"]])->update(['STEP_STSTUS'=>'1']) ){

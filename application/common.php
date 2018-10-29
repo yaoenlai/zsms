@@ -134,3 +134,25 @@ function get_source_img($code){
         return false;
     }
 }
+/** 
+ * 通知消息
+ * @param string $title 标题
+ * @param string $title 内容
+ * @param string $type 消息类型 1、用户发送；2、系统发送
+ * @param string $u_id 接受用户U_ID
+ *  */
+function msg_add($title='', $content='', $u_id, $type='2'){
+    $insert = [
+        'TITLE'     => $title
+        ,'CONTENT'  => $content
+        ,'TYPE'     => $type
+        ,'U_ID'     => $u_id
+        ,'ADDTIME'  => time()
+        ,'ADDDATE'  => date("Y-m-d H:i:s")
+    ];
+    if(db('MsgBak')->insert($insert)){
+        return true;
+    } else {
+        return false;
+    }
+}

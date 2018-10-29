@@ -83,7 +83,7 @@ class Social extends Common
         );
         $info = db("CardOrderBak")->where($where)->find();
         if(!empty($info)){
-            
+            msg_add('社保卡办理','社保卡办理支付成功',$this->_loginInfo['U_ID']);
             (new Card())->addCard($info);
         } else {
             rjson('', '400', '该订单有问题，请检查');
@@ -97,7 +97,7 @@ class Social extends Common
         );
         $info = db("CardMail")->where($where)->find();
         if( !empty($info) ){
-            
+            msg_add('社保卡邮寄','社保卡邮寄支付成功',$this->_loginInfo['U_ID']);
             (new Card())->addCardMailPay($info["ID"],$info['CARD_ID']);
         } else {
             rjson('', '400', '该订单有问题，请检查');
@@ -113,6 +113,7 @@ class Social extends Common
         ];
         $info = db('Retire')->where($where)->find();
         if( !empty($info) ){
+            msg_add('退休认证','退休认证寄支付成功',$this->_loginInfo['U_ID']);
             (new Retire())->orderPay($info['ID']);
         } else {
             rjson('', '400', '请检查订单号');
@@ -131,7 +132,9 @@ class Social extends Common
             'GUARDIAN_ADDRESS'      => $data['guardian_address'],
             'GUARDIAN_START_TIME'   => strtotime($data['guardian_start_time']),
             'GUARDIAN_END_TIME'     => strtotime($data['guardian_end_time']),
-            'GUARDIAN_RELATION'     => $data['guardian_relation']
+            'GUARDIAN_RELATION'     => $data['guardian_relation'],
+            'FRONT_IMG'             => $data['front_img'],
+            'OPPOSITE_IMG'          => $data['opposite_img'],
         ];
         
         //判断监护人是否已填写
@@ -148,6 +151,7 @@ class Social extends Common
         } else {
             $gua_list['PID']        = $data['card_id'];
             $gua_list['ADD_TIME']   = time();
+            $gua_list['ADD_DATE']   = date("Y-m-d H:i:s");
             
             if( db("guardian")->insert($gua_list) ){
                 rjson('监护人信息录入成功');
@@ -181,8 +185,7 @@ class Social extends Common
                     
                     /*用户推送消息*/
                     $find_user = db("user")->where([ "phone"=>$data['token_phone'] ])->find();
-                    $add_msg = user_msg($find_user['ID'],'社保卡办理','您的社保卡申请资料已经提交,请等待审核',1);
-                    if( db("msg")->insert($add_msg) ){
+                    if( msg_add('社保卡办理', '您的社保卡申请资料已经提交,请等待审核', $find_user['ID']) ){
                         
                         /*极光推送*/
 //                         pushMessages($find_user['JPUSH_ID'],'您的社保卡申请资料已经提交,请等待审核');

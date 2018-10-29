@@ -71,6 +71,7 @@ class Retire extends Common
             'LIVE_STATUS'   => 1
         ];
         if( db("Retire")->where($where)->update($save_data) ){
+            msg_add('退休认证', '退休认证手动认证通过', input('post.U_ID'));
             rjson('手动认证通过');
         } else {
             rjson_error('未知错误');
