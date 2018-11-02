@@ -8,10 +8,11 @@ class News extends Common
         $where = [];
         if(!empty(input('post.class_id'))){
             $where['PID'] = array("EQ", input('post.class_id'));
-        }
+        }  
         
         $this->_where = $where;
         
         parent::list();
     }
+    
 }

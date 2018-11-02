@@ -88,3 +88,14 @@ function get_price($type=''){
         return $list;
     }
 }
+
+/*
+ * 获取文章详情
+ *   */
+function getContent($path){
+    if(! file_exists(dirname($path)) ){
+        return $path;
+    } else {
+        return file_get_contents($path);
+    }
+}

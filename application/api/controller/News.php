@@ -29,6 +29,7 @@ class News extends Controller
             'ID'    => input('post.id')
         ];
         $info = db('News')->where($where)->find();
+        $info["CONTENT"] = getContent($info['CONTENT']);
         rjson($info);
     }
     

@@ -80,6 +80,7 @@ class Card extends Model
                 /* 删除遗留社保详情表  */
                 $where = [
                     'C_CODE'    => $this->_postData['c_code']
+                    ,'IS_LOCK'  => '1'
                 ];
                 db("CardOrderBak")->where($where)->update(['IS_LOCK'=>'0']);
                 db("Card")->where($where)->update(['IS_LOCK'=>'0']);
@@ -122,7 +123,11 @@ class Card extends Model
                     $insert_card['C_ADD_TIME']  = time();
                     $insert_card['C_ADD_DATE']  = date("Y-m-d H:i:s", time());
                     if( db('Card')->insert($insert_card) ){
-                        
+                        /* 监护人录入，重新生成订单时 */
+                        $card_id = db('Card')->where($where)->value("ID");
+                        if(!empty($card_id) && !empty(input('post.card_id'))){
+                            db('guardian')->where(['PID'=>input('post.card_id')])->update(['PID'=>$card_id]);
+                        }
                         Db::commit(); 
                         rjson(array("prepay_id"=>$number,"numbers"=>$numbers));
                     } else {
@@ -140,7 +145,7 @@ class Card extends Model
         }
     }
     
-    public function addCard($find_card_info){
+    public function addCard(){
         Db::startTrans();
         try {
             
@@ -153,20 +158,23 @@ class Card extends Model
             if(!empty($card_info)){
                 /* 修改社保基础信息 */
                 $save = [
-                    'IS_PAY'    => '1'
+                    'IS_PAY'    => 1
                     ,'PAY_TIME' => time()
                     ,'LR_TYPE'  => '1'
                 ];
                 if( db('Card')->where($where)->update($save) ){
                     /* 修改已添加邮寄的社保号 */
-                    db('CardMail')->where(['C_CODE'=>$find_card_info['C_CODE'], 'TYPE'=>'1'])->update(['CARD_ID'=>$do_add]);
+                    db('CardMail')->where(['C_CODE'=>$card_info['C_CODE'], 'TYPE'=>'1'])->update(['CARD_ID'=>$card_info["ID"]]);
                     
-                    $save['STATUS']         = 1;
-                    $save['PID']            = $card_info["ID"];
-                    $save['FINISH_TIME']    = time();
-                    $save['FINISH_DATE']    = date("Y-m-d H:i:s");
-                    $save['PRICE']          = $this->_postData['price'];
-                    $save['PAYMENT']        = $this->_postData['payment'];
+                    $save = [
+                        'STATUS'        => '1'
+                        ,'PID'          => $card_info["ID"]
+                        ,'FINISH_TIME'  => time()
+                        ,'FINISH_DATE'  => date("Y-m-d H:i:s")
+                        ,'PRICE'        => get_price('1')
+                        ,'PAYMENT'      => $this->_postData['payment']
+                    ];
+
                     if( db("order")->where(["prepay_id"=>$this->_postData['prepay_id'] ])->update($save) ){
                         
                         Db::commit();
@@ -305,7 +313,7 @@ class Card extends Model
                 ];
                 if( 
                     db("order")->where(["prepay_id"=>$this->_postData['prepay_id'] ])->update($order_save) 
-                    && db('Card')->where(['ID'=>$card_id])->update(['EXAM_STATUS'=>'4'])
+                    && db('Card')->where(['ID'=>$card_id])->update(['IS_EXPRESS'=>'3'])
                     ){
                     Db::commit();
                     rjson(array('card_mail_id'=>$card_mail_id), '200', '支付成功');

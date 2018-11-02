@@ -8,6 +8,9 @@ class Order extends Common
         if(!empty(input('post.code'))){
             $where['USER_CODE'] = array("LIKE", '%'.input('post.code').'%');
         }
+        if(!empty(input('post.code2'))){
+            $where['C_CODE'] = array("LIKE", '%'.input('post.code2').'%');
+        }
         if(!empty(input('post.pay_type'))){
             $where['TYPE'] = array("EQ", input('post.pay_type'));
         }

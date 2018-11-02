@@ -29,7 +29,7 @@ class Common extends Controller
                         rjson_error('用户组信息不存在');
                     }
                 } else {
-                    rjson_error('用户信息不存在');
+                    rjson('', '201', '用户信息不存在');
                 }
             } else {
                 rjson_error('登录信息不存在');

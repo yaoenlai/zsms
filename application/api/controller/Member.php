@@ -59,7 +59,7 @@ class Member extends Common
     //订单/账单列表
     public function orderList(){
         $where = [
-            'DELETED'   => '1'
+            'DELETED'   => '0'
             ,'U_ID'     => $this->_loginInfo['U_ID']
             ,'STATE'    => 1
         ];

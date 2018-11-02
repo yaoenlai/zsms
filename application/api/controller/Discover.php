@@ -22,6 +22,9 @@ class Discover extends Controller
             'PID'       => $data['pid'],
         ];
         $list = db('Discover')->where($where)->select();
+        foreach ($list AS $key=>$value){
+            $list[$key]['CONTENT'] = getContent($value['CONTENT']);
+        }
         rjson($list);
     }
     
@@ -48,6 +51,7 @@ class Discover extends Controller
             'ID'    => input('post.id')
         ];
         $info = db("Nearby")->where($where)->find();
+        $info["CONTENT"] = getContent($info['CONTENT']);
         rjson($info);
     }
 }

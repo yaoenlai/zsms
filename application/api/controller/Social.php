@@ -87,7 +87,7 @@ class Social extends Common
         $info = db("CardOrderBak")->where($where)->find();
         if(!empty($info)){
             msg_add('社保卡办理','社保卡办理支付成功',$this->_loginInfo['U_ID']);
-            (new Card())->addCard($info);
+            (new Card())->addCard();
         } else {
             rjson('', '400', '该订单有问题，请检查');
         }
