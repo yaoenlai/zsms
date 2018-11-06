@@ -125,10 +125,14 @@ class Card extends Model
                     $insert_card['C_ADD_TIME']  = time();
                     $insert_card['C_ADD_DATE']  = date("Y-m-d H:i:s", time());
                     if( db('Card')->insert($insert_card) ){
-                        /* 监护人录入，重新生成订单时 */
+                        /* 重新生成订单时 */
                         $card_id = db('Card')->where($where)->value("ID");
                         if(!empty($card_id) && !empty(input('post.card_id'))){
+                            
+                            /* 修改已添加的监护人信息 */
                             db('guardian')->where(['PID'=>input('post.card_id')])->update(['PID'=>$card_id]);
+                            /* 修改已添加邮寄的社保号 */
+                            db('CardMail')->where(['CARD_ID'=>input('post.card_id'), 'TYPE'=>'1'])->update(['CARD_ID'=>$card_id]);
                         }
                         Db::commit(); 
                         rjson(array("prepay_id"=>$number,"numbers"=>$numbers));
@@ -165,8 +169,6 @@ class Card extends Model
                     ,'LR_TYPE'  => '1'
                 ];
                 if( db('Card')->where($where)->update($save) ){
-                    /* 修改已添加邮寄的社保号 */
-                    db('CardMail')->where(['C_CODE'=>$card_info['C_CODE'], 'TYPE'=>'1'])->update(['CARD_ID'=>$card_info["ID"]]);
                     
                     $save = [
                         'STATUS'        => '1'

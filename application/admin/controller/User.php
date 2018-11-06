@@ -77,4 +77,16 @@ class User extends Common
             rjson_error('设置失败');
         }
     }
+    
+    public function sendMsg(){
+        $content = input('post.content');
+        if(!empty(input('u_id_value'))){
+            $u_id_arr = explode(',', input('u_id_value'));
+        }
+   
+        foreach ($u_id_arr as $u_id){
+            msg_add('系统管理员推送消息', $content, $u_id);
+        }
+        rjson('消息推送完成');
+    }
 }

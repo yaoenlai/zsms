@@ -22,7 +22,7 @@ class News extends Controller
         ];
         
         $page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
-        $page_size = empty(input('post.page_size')) ? "100" : input("post.page_size");
+        $page_size = empty(input('post.page_size')) ? "1000" : input("post.page_size");
         
         $list = db('News')->field('ID,TITLE,HEAD_IMG')->limit($page_size)->page($page_index)->where($where)->order("SORT DESC")->select();
         rjson($list);

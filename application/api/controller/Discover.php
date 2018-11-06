@@ -43,7 +43,7 @@ class Discover extends Controller
         ];
         
         $page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
-        $page_size = empty(input('post.page_size')) ? "100" : input("post.page_size");
+        $page_size = empty(input('post.page_size')) ? "1000" : input("post.page_size");
         
         $list = db('Nearby')->field("ID,X,Y,Z,TITLE,HEAD_IMG")->limit($page_size)->page($page_index)->whereOr($where)->select();
         rjson($list);

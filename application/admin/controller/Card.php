@@ -21,6 +21,13 @@ class Card extends Common
         if(!empty(input('post.is_mail'))){
             $where['IS_EXPRESS'] = array("EQ", input('post.is_mail'));
         }
+        if(!empty(input('post.is_import'))){
+            if(input('post.is_import') == '00'){
+                $where['IS_IMPORT'] = array("EQ", '0');
+            } else {
+                $where['IS_IMPORT'] = array("EQ", input('post.is_import'));
+            }
+        }
         if( !empty(input('post.date_value_0')) && !empty(input('post.date_value_1')) ){
             $where['C_ADD_TIME'] = array('BETWEEN',array(input('post.date_value_0'),input('post.date_value_1')));
         }
@@ -152,6 +159,12 @@ class Card extends Common
     public function getMz(){
         $where = [];
         $list = db("Mz")->where($where)->select();
+        rjson($list);
+    }
+    //获取网点
+    public function getDot(){
+        $where = [];
+        $list = db("Dot")->where($where)->select();
         rjson($list);
     }
 }

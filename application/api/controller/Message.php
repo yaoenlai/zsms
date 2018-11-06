@@ -15,7 +15,7 @@ class Message extends Common
         
         if(!empty($this->_postData['status'])) $where['STATUS'] = $this->_postData['status'];
         
-        $list = db("Msg")->where($where)->order('ADDTIME DESC')->select();
+        $list = db("Msg")->where($where)->limit($this->page_size)->page($this->page_index)->order('ADDTIME DESC')->select();
         rjson($list);
     }
     

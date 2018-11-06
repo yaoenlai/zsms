@@ -41,7 +41,7 @@ class Common extends Controller
                     $this->_postData = input('post.');
                     
                     $this->page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
-                    $this->page_size = empty(input('post.page_size')) ? "20" : input("post.page_size");
+                    $this->page_size = empty(input('post.page_size')) ? "1000" : input("post.page_size");
                 }
             }
         }
