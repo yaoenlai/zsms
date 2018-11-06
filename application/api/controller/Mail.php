@@ -15,10 +15,7 @@ class Mail extends Common
         if(!empty($this->_postData['is_pay'])) $where['IS_PAY'] = $this->_postData['is_pay'];
         if(!empty($this->_postData['step_status'])) $where['STEP_STSTUS'] = $this->_postData['step_status'];
         
-        $page_index = empty($this->_postData['page_index']) ? '1' : $this->_postData['page_index'];
-        $page_size  = empty($this->_postData['page_size']) ? '10' : $this->_postData['page_size'];
-        
-        $list['data'] = db('Mail')->where($where)->limit($page_size)->page($page_index)->order('ADDTIME DESC')->select();
+        $list['data'] = db('Mail')->where($where)->limit($this->page_size)->page($this->page_index)->order('ADDTIME DESC')->select();
         $list['total'] = db('Mail')->where($where)->count();
         rjson($list);
     }

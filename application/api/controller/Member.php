@@ -64,12 +64,9 @@ class Member extends Common
             ,'STATE'    => 1
         ];
         
-        if(!empty($this->_postData['status'])) $where['STATUS'] = $this->_postData['status'];
-        
-        $page_index = empty($this->_postData['page_index']) ? '1' : $this->_postData['page_index'];
-        $page_size  = empty($this->_postData['page_size']) ? '10' : $this->_postData['page_size'];
+        if(!empty($this->_postData['status'])) $where['STATUS'] = $this->_postData['status'];       
             
-        $list['data'] = db('Order')->where($where)->limit($page_size)->page($page_index)->order('CREATE_TIME DESC')->select();
+        $list['data'] = db('Order')->where($where)->limit($this->page_size)->page($this->page_index)->order('CREATE_TIME DESC')->select();
         $list['total'] = db('Order')->where($where)->count();
         rjson($list);
     }

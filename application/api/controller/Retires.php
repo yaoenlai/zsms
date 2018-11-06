@@ -14,19 +14,42 @@ class Retires extends Common
             'U_ID'      => $this->_loginInfo['U_ID'],
             'IS_LOCK'   => '1',
         ];
-        $list = db('Retire')->where($where)->select();
+        $list = db('Retire')->where($where)->limit($this->page_size)->page($this->page_index)->select();
         foreach ($list as $key=>$value){
             $list[$key] = array_merge($value, getCItyName($value['AREA']));
         }
         rjson($list);
     }
     
-    //获取退休会员信息列表
-    public function getInfoList(){
+    //退休详情
+    public function detail(){
+        $where = [
+            'U_ID'      => $this->_loginInfo['U_ID'],
+            'PREPAY_ID' => input('post.prepay_id'),
+            'IS_LOCK'   => '1',
+        ];
+        $info= db('Retire')->where($where)->find();
+        $info = array_merge($info, getCItyName($info['AREA']));
+        
+        rjson($info);
+    }
+    
+    //获取退休人员区域
+    public function getInfoZone(){
         $where = [
             "CODE"  => $this->_postData['code']
         ];
-        $list = db("RetireInfo")->where($where)->select();
+        $list = db("RetireInfo")->field('ZONE_CODE,ZONE_NAME')->where($where)->group('ZONE_CODE,ZONE_NAME')->select();
+        rjson($list);
+    }
+    
+    //获取退休会员险种
+    public function getInfoList(){
+        $where = [
+            "CODE"      => $this->_postData['code']
+            ,"ZONE_CODE"=> $this->_postData['zone_code']
+        ];
+        $list = db("RetireInfo")->field('ZONE_CODE,XZ_CODE,XZ_NAME')->where($where)->select();
         rjson($list);
     }
     
@@ -49,7 +72,13 @@ class Retires extends Common
         
         $find = db('RetireInfo')->where($where)->find();
         $find['PID'] = $retire_info['ID'];
-        $find['PREPAY_ID'] = $retire_info['PREPAY_ID'];
+        //判断是否需要支付
+        if($find['IS_PAY'] == '1'){
+            $find['PREPAY_ID'] = $retire_info['PREPAY_ID'];
+            $find['STATUS'] = db("Order")->where(['PREPAY_ID'=>$retire_info['PREPAY_ID'],'TYPE'=>'3'])->value('STATUS');
+        } else {
+            db("Order")->where(['PREPAY_ID'=>$retire_info['PREPAY_ID']])->delete();
+        }
         rjson($find);
     }
     

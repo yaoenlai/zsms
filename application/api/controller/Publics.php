@@ -98,6 +98,21 @@ class  Publics extends Controller
         rjson($list);
     }
     
+    //获取社保卡进度
+    public function getSchedule(){
+        if (empty(input('post.code'))) rjson('', '400', '请输出身份证号');
+        
+        $where = [
+            'c.IS_LOCK'   => '1'
+            ,'c.C_CODE'   => input('post.code') 
+        ];
+        $list = db('Card')->alias('c')
+            ->field('c.C_NAME,c.C_CODE,c.EXAM_STATUS,c.IS_IMPORT,c.IS_IMPORT,CASE WHEN c.IS_IMPORT=1 THEN c.PULL_ADDRESS ELSE d.ADDRESS END AS ADDRESS')
+            ->join('sb_dot d', 'd.ID=c.D_ID', 'LEFT')
+            ->where($where)->select();
+        rjson($list);
+    }
+    
     public function jsonp(){
         $url = input('post.url');
         $data = input('post.');

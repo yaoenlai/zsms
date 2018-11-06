@@ -184,24 +184,14 @@ class Social extends Common
         try{
             if( db('card')->where($where)->update($save) ){
                 
-                /*社保卡进度更新*/
-                $add_status = card_status($data['card_id'], '1', '您的社保卡申请资料已经提交,请等待审核');
-                if( db("CardStatus")->insert($add_status) ){
-                    
-                    /*用户推送消息*/
-                    $find_user = db("user")->where([ "phone"=>$data['token_phone'] ])->find();
-                    if( msg_add('社保卡办理', '您的社保卡申请资料已经提交,请等待审核', $find_user['ID']) ){
-                        
-                        /*极光推送*/
-//                         pushMessages($find_user['JPUSH_ID'],'您的社保卡申请资料已经提交,请等待审核');
-                        Db::commit(); 
-                        rjson('您的社保卡申请资料已经全部提交完成,请等待审核');
-                    } else {
-                        exception(showRegError(-16).'[3]');
-                    }
+                if ( msg_add('社保卡办理', '您的社保卡申请资料已经提交,请等待审核', $this->_loginInfo['U_ID']) ){
+                    /*极光推送*/
+//                     pushMessages($find_user['JPUSH_ID'],'您的社保卡申请资料已经提交,请等待审核');
+                    Db::commit();
+                    rjson('您的社保卡申请资料已经全部提交完成,请等待审核');
                 } else {
                     exception(showRegError(-16).'[2]');
-                }
+                }                              
             } else {
                 exception(showRegError(-16),'[1]');
             }
@@ -217,7 +207,7 @@ class Social extends Common
             'U_ID'      => $this->_loginInfo['U_ID'],
             'IS_LOCK'   => '1',
         ];
-        $list = db('card')->where($where)->order('C_ADD_TIME DESC')->select();
+        $list = db('card')->where($where)->limit($this->page_size)->page($this->page_index)->order('C_ADD_TIME DESC')->select();
         rjson($list);
     }
     

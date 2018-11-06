@@ -20,7 +20,11 @@ class News extends Controller
             'IS_LOCK'   => '1',
             'PID'       => $data['pid'],
         ];
-        $list = db('News')->field('ID,TITLE,HEAD_IMG')->where($where)->select();
+        
+        $page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
+        $page_size = empty(input('post.page_size')) ? "100" : input("post.page_size");
+        
+        $list = db('News')->field('ID,TITLE,HEAD_IMG')->limit($page_size)->page($page_index)->where($where)->order("SORT DESC")->select();
         rjson($list);
     }
     //文章详情

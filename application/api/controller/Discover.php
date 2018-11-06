@@ -41,7 +41,11 @@ class Discover extends Controller
             'X'     => ['BETWEEN',[$min_X,$max_X]]
             ,'Y'    => ['BETWEEN',[$min_Y,$max_Y]]
         ];
-        $list = db('Nearby')->field("ID,X,Y,Z,TITLE,HEAD_IMG")->whereOr($where)->select();
+        
+        $page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
+        $page_size = empty(input('post.page_size')) ? "100" : input("post.page_size");
+        
+        $list = db('Nearby')->field("ID,X,Y,Z,TITLE,HEAD_IMG")->limit($page_size)->page($page_index)->whereOr($where)->select();
         rjson($list);
     }
     
