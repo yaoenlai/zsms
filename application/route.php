@@ -21,6 +21,8 @@ return [
     // 图片 文件下载API
     'img' 			=> 'Upload/Index/img',
     'down' 			=> 'Upload/Index/down',
+    'card_img'      => 'Upload/Index/card_img',
+    'retire_img'    => 'Upload/Index/retire_img',
     
     // 图片 上传
     'upload' 		=> 'Upload/Index/upload',

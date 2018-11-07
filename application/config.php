@@ -278,4 +278,13 @@ return [
         'notify_url' => 'http://47.96.12.115:82/pay/Wx/notify',
         'key'  => 'YDKJ20181021ydkjYDKJ20181021ydkj',
     ],   
+    
+    // +----------------------------------------------------------------------
+    // | 文件路径
+    // +----------------------------------------------------------------------
+    'file_path' => [
+        'card_path'     => 'E:\public_img\card_path',
+        'retire_path'   => 'E:\public_img\retire_path',
+        'doc_path'      => 'E:\public_img\doc_path',
+    ],
 ];

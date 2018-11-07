@@ -1,5 +1,6 @@
 <?php
 use think\Config;
+use app\admin\controller\Publics;
 
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
@@ -111,9 +112,11 @@ function str_rand($length = 32, $char = '0123456789abcdefghijklmnopqrstuvwxyzABC
  * @param string $xz_code 险种编码
  * @param string $zone_code 参保区域编码
  *  */
-function get_source_img($code){
+function get_source_img($code,$path=''){
     
-    $path = "./image/source_img/{$code}.jpg";
+    if(empty($path)){
+        $path = "./image/source_img/{$code}.jpg";
+    }
     
     $where = [
         'CODE'    => $code
@@ -123,13 +126,9 @@ function get_source_img($code){
         return false;
     }
     $obj = stream_get_contents($info['IMG']);
-    //创建文件夹
-    if(!file_exists(dirname($path))){
-        mkdir(dirname($path));
-    }
     
     if(file_put_contents($path, $obj)){
-        return trim($path,'.');
+        return true;
     } else {
         return false;
     }
@@ -154,5 +153,21 @@ function msg_add($title='', $content='', $u_id, $type='2'){
         return true;
     } else {
         return false;
+    }
+}
+/** 
+ * 判断文件夹是否存在，不存在就创建
+ * @param string $path 路径
+ * @return bool
+ *  */
+function mkdirs($path){
+    if(!file_exists(dirname($path))){
+        if(mkdir(dirname($path),0777,true)){
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return true;
     }
 }

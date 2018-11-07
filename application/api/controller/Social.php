@@ -245,4 +245,69 @@ class Social extends Common
             rjson('', '400', '该社保状态不能修改');
         }
     }
+    
+    //获取无水印照片（获取二寸照照片）
+    public function take_cut_pic(){
+        $url = input('post.url');
+        $post_data = [
+            'file_name' => input('post.file_name')
+            ,'app_key'  => input('post.app_key')
+        ];
+        
+        $data = $this->http_url($url, json_encode($post_data));
+        
+        $image_path = '/card_img/source_img/'.$post_data['file_name'].'.jpg';
+        $path = config('file_path.card_path').$image_path;
+        
+        if (mkdirs($path)){
+            file_put_contents($path, $data);
+            rjson('/card_img?path='.$image_path);
+        } else {
+            rjson('', '400', '创建路径失败');
+        }
+    }
+    private function http_url($url,$data=null){
+        
+        $headers = array(
+            'Content-Type: application/json;charset=utf-8',
+            'Content-Length: ' . strlen($data),
+            'y-cli:pc'
+        );
+        
+        $curl=curl_init();
+        //设置请求地址
+        curl_setopt($curl,CURLOPT_URL,$url);
+        curl_setopt($curl,CURLOPT_POST,1);
+        curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,false);
+        curl_setopt($curl,CURLOPT_SSL_VERIFYHOST,false);
+        curl_setopt($curl,CURLOPT_POSTFIELDS,$data);
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $output=curl_exec($curl);
+        curl_close($curl);
+        return $output;
+    }
+    
+    //身份证正反面照片上传
+    public function card_upload(){
+        // 获取表单上传文件 例如上传了001.jpg
+        $file = request()->file('file');
+        
+        // 移动到框架应用根目录/public/uploads/ 目录下
+        if($file){
+            $info = $file->move(config('file_path.card_path'). '/card_img');
+            if($info){
+                // 成功上传后 获取上传信息
+                $return = array(
+                    'ext'       => $info->getExtension(),
+                    'path'      => '/card_img?path='.'/card_img/'.$info->getSaveName(),
+                    'file_name' => $info->getFilename()
+                );;
+                rjson($return);
+            }else{
+                // 上传失败获取错误信息
+                rjson('', '400', $file->getError());
+            }
+        }
+    }
 }

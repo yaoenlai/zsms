@@ -14,7 +14,7 @@ class Retire extends Model
         parent::initialize();
     }
     
-    //创建退休认证临时单
+    //创建退休认证临时单-开始
     public function add2($u_id, $u_name){
         Db::startTrans();
         try {
@@ -58,54 +58,45 @@ class Retire extends Model
         }
     }
     
-    //申请退休(废弃)
-    public function add($u_id){
-        Db::startTrans();
-        try {
-            /*订单信息开始*/
-            $number = date('YmdHis').rand(10000000, 99999900).$this->_postData['token_phone'];
-            $numbers = date('YmdHis').rand(10000000, 99999900);
-            $insert['U_ID']         = $u_id;
-            $insert['PREPAY_ID']    = $number;
-            $insert['NUMBERS']      = $numbers;
-            //退休办理费用 3
-            $insert['TYPE']         = 3;
-            $insert['CREATE_TIME']  = time();
-            $insert['STATUS']       = 2;
-            $insert['STATE']        = 1;
-            if( db('order')->insert($insert) ){
-                /*即将录入的个人信息的存储*/
-                $insert_bak['U_ID']             = $u_id;
-                $insert_bak['PREPAY_ID']        = $number;
-                $insert_bak['C_NAME']           = $this->_postData['c_name'];
-                $insert_bak['C_CODE']           = $this->_postData['c_code'];
-                $insert_bak['C_SEX']            = $this->_postData['c_sex'];
-                $insert_bak['C_BIRTHDAY']       = $this->_postData['c_birthday'];
-                $insert_bak['C_NATION']         = $this->_postData['c_nation'];
-                $insert_bak['C_PHONE']          = $this->_postData['c_phone'];
-                $insert_bak['C_ADDRESS']        = $this->_postData['c_address'];
-                $insert_bak['C_STATR_TIME']     = $this->_postData['c_statr_time'];
-                $insert_bak['C_END_TIME']       = $this->_postData['c_end_time'];
-                $insert_bak['C_DEPARTMENT']     = $this->_postData['c_department'];
-                $insert_bak['NOW_ADDRESS']      = $this->_postData['now_address'];
-                $insert_bak['ENTRANCE']         = $this->_postData['entrance'];
-                $insert_bak['FRONT_IMG']        = $this->_postData['front_img'];
-                $insert_bak['OPPOSITE_IMG']     = $this->_postData['opposite_img'];
-                $insert_bak['C_ADD_TIME']       = date("Y-m-d H:i:s", time());
-                $insert_bak['C_ADD_IP']         = getIp();
-                $insert_bak['ADDTIME']          = time();
-                if( db('Retire')->insert($insert_bak) ){
-                    Db::commit();
-                    rjson(array("prepay_id"=>$number,"numbers"=>$numbers));
-                } else {
-                    exception(showRegError(-16));
-                }
-            } else {
-                exception(showRegError(-16));
-            }
-        } catch (\Exception $e){
-            Db::rollback();
-            rjson('', '400', $e->getMessage());
+    //退休认证-完成
+    public function add(){
+        $data = $this->_postData;
+        
+        $where = [
+            'ID'   => $data['pid']
+        ];
+        $info = db("Retire")->where($where)->find();
+        
+        $where2 = [
+            'CODE'  => $data['code']
+            ,'CYC'  => date("Ym")
+        ];
+        
+        $where3 = [
+            'INSURANCE'     => $info['INSURANCE']
+            ,"ZONE"         => $$info['AREA']
+            ,"PERIOD_BEGIN" => array('ELT', date('m'))
+            ,'PERIOD_END'   => array('EGT', date('m'))
+        ];
+        
+        $save_data = [
+            'PHONE'         => $data['phone']
+            ,'AREA'         => $data['area']
+            ,'ADDRESS'      => $data['address']
+            ,'REMARKS'      => $data['remarks']
+            ,'LIVE_STATUS'  => $data['live_status']
+            ,'FACE_STATUS'  => $data['face_status']
+            ,'INSURANCE'    => $data['insurance']
+            ,'LIVE_NUM'     => db("RetireLive")->where($where2)->count()
+            ,'FACE_NUM'     => db("RetireFace")->where($where2)->count()
+            ,'PERIOD'       => db('Policy')->where($where3)->value('PERIOD')
+            ,'SOURCE_IMG'   => $data['source_img']
+            ,"TYPE"         => $data['type']
+        ];
+        if( db("Retire")->where($where)->update($save_data) ){
+            return true;
+        } else {
+            return false;
         }
     }
     

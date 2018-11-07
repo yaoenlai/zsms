@@ -74,16 +74,20 @@ class Card extends Common
             //大于16岁的才有身份证
             if($info['TYPE'] == '1'){
                 $templateProcessor->setImg('FRONT_IMG', array(
-                    'src'=>ROOT_PATH.'public'.$info['FRONT_IMG'],
+                    'src'=>config('file_path.card_path').str_replace('/card_img?path=', '', $info['FRONT_IMG']),
                     'size' => array( 150, 150 ) //图片大小，单位px
                 ));
                 $templateProcessor->setImg('OPPOSITE_IMG', array(
-                    'src'=>ROOT_PATH.'public'.$info['OPPOSITE_IMG'],
+                    'src'=>config('file_path.card_path').str_replace('/card_img?path=', '', $info['OPPOSITE_IMG']),
                     'size' => array( 150, 150 ) //图片大小，单位px
                 ));
             }
             //保存文件
-            $templateProcessor->saveAs('doc/'.$info['C_CODE'].'_'.time().'.docx');
+            $path = config('file_path.doc_path').'/'.date("Ymd").'/'.$info['C_CODE'].'_'.time().'.docx';
+            if(mkdirs($path)){
+                $templateProcessor->saveAs($path);
+            }
+            
             msg_add('社保卡办理', '社保卡办理审核通过', $u_id);
         }
         if($data['exam_status'] == '6'){

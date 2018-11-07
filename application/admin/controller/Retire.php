@@ -19,6 +19,9 @@ class Retire extends Common
         if(!empty(input('post.xz_code'))){
             $where['INSURANCE']  = array("EQ", input('post.xz_code'));
         }
+        if(!empty(input('post.period'))){
+            $where['PERIOD']  = array("EQ", input('post.period'));
+        }
         if(!empty(input('post.type'))){
             $where['TYPE']  = array("EQ", input('post.type'));
         }

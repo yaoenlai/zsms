@@ -16,6 +16,9 @@ class CardMail extends Common
         
         $data = [];
         $data['list'] = db("Mail")->where($where)->limit($page_size)->page($page_index)->order('ADDTIME DESC')->select();
+        foreach ($data['list'] AS $key => $value){
+            $data['list'][$key] = array_merge($value, getCItyName($value['AREA']));
+        }
         $data['total'] = db("Mail")->where($where)->count();
         
         rjson($data);

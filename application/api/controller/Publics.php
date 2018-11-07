@@ -152,38 +152,4 @@ class  Publics extends Controller
         echo $output;
     }
     
-    public function take_cut_pic(){
-        $url = input('post.url');
-        $post_data = input('post.');
-        unset($post_data['url']);
-        
-        $data = $this->http_url($url, json_encode($post_data));
-        
-        $image_path = './image/'.$post_data['file_name'].'.jpg';
-        file_put_contents($image_path, $data);
-        
-        rjson(trim($image_path,'.'));
-    }
-       
-    public function http_url($url,$data=null){
-        
-        $headers = array(
-            'Content-Type: application/json;charset=utf-8',
-            'Content-Length: ' . strlen($data),
-            'y-cli:pc'
-        );
-        
-        $curl=curl_init();
-        //设置请求地址
-        curl_setopt($curl,CURLOPT_URL,$url);
-        curl_setopt($curl,CURLOPT_POST,1);
-        curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,false);
-        curl_setopt($curl,CURLOPT_SSL_VERIFYHOST,false);
-        curl_setopt($curl,CURLOPT_POSTFIELDS,$data);
-        curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        $output=curl_exec($curl);
-        curl_close($curl);
-        return $output;
-    }
 }

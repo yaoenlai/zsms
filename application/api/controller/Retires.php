@@ -147,32 +147,8 @@ class Retires extends Common
     //退休认证
     public function add(){
       
-        $data = $this->_postData;
-        
-        $where = [
-            'ID'   => $data['pid']
-        ];
-        
-        $where2 = [
-            'CODE'  => $data['code']
-            ,'CYC'  => date("Ym")
-        ];
-        
-        $save_data = [
-            'PHONE'         => $data['phone']
-            ,'AREA'         => $data['area']
-            ,'ADDRESS'      => $data['address']
-            ,'REMARKS'      => $data['remarks']
-            ,'LIVE_STATUS'  => $data['live_status']
-            ,'FACE_STATUS'  => $data['face_status']
-            ,'INSURANCE'    => $data['insurance']
-            ,'LIVE_NUM'     => db("RetireLive")->where($where2)->count()
-            ,'FACE_NUM'     => db("RetireFace")->where($where2)->count()
-            ,'SOURCE_IMG'   => $data['source_img']
-            ,"TYPE"         => $data['type']
-        ];
-        if( db("Retire")->where($where)->update($save_data) ){
-            msg_add('退休认证', '退休认证采集完成', $this->_loginInfo['U_ID']);
+        if( (new Retire())->add() ){
+            msg_add('退休认证', '退休认证完成', $this->_loginInfo['U_ID']);
             rjson('认证完成');
         } else {
             rjson('', '400', '认证错误');
@@ -185,11 +161,42 @@ class Retires extends Common
     public function getImage(){
         if(empty(input('post.code'))) rjson_error('身份证号码为空');
         
-        $path = get_source_img( input('post.code') );
-        if(!empty($path)){
-            rjson($path);
+        $image_path = "/retire_img/source_img/".input('post.code').".jpg";
+        $path = config('file_path.retire_path').$image_path;
+        
+        if(mkdirs($path)){
+            if( get_source_img( input('post.code'),  $path) ){
+                rjson('/retire_img?path='.$image_path);
+            } else {
+                rjson('','400','获取源照片失败');
+            }
         } else {
-            rjson('','400','获取源照片失败');
+            rjson('', '400', '目录创建失败');
+        }
+        
+        
+    }
+    
+    //活体截图、拍照照片
+    public function retire_upload(){
+        // 获取表单上传文件 例如上传了001.jpg
+        $file = request()->file('file');
+        
+        // 移动到框架应用根目录/public/uploads/ 目录下
+        if($file){
+            $info = $file->move(config('file_path.retire_path'). '/retire_img');
+            if($info){
+                // 成功上传后 获取上传信息
+                $return = array(
+                    'ext'       => $info->getExtension(),
+                    'path'      => '/retire_img?path='.'/retire_img/'.$info->getSaveName(),
+                    'file_name' => $info->getFilename()
+                );;
+                rjson($return);
+            }else{
+                // 上传失败获取错误信息
+                rjson('', '400', $file->getError());
+            }
         }
     }
 }
