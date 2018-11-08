@@ -74,7 +74,7 @@ class Retire extends Model
         
         $where3 = [
             'INSURANCE'     => $info['INSURANCE']
-            ,"ZONE"         => $$info['AREA']
+            ,"ZONE"         => $info['AREA']
             ,"PERIOD_BEGIN" => array('ELT', date('m'))
             ,'PERIOD_END'   => array('EGT', date('m'))
         ];

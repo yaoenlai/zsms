@@ -218,6 +218,9 @@ class Social extends Common
             'PREPAY_ID' => input('post.prepay_id'),
         ];
         $info = db('cardOrderBak')->where($where)->find();
+        if(empty($info)){
+            rjson('', '400', '该用户此订单号有问题,请检查该订单号');
+        }
         $info = array_merge($info, getCItyName($info['NOW_AREA']));
         rjson($info);
     }

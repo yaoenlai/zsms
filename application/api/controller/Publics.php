@@ -120,12 +120,45 @@ class  Publics extends Controller
 
         $tmp_name = array(          
             //要上传的本地文件地址
-            "image" => new \CURLFile(ROOT_PATH.'/public/'.$data['image']),
+            "image" => new \CURLFile(config('file_path.retire_path').str_replace('/retire_img?path=', '', $data['image'])),
         );
         
-        if(!empty($data['image_ref1'])) $tmp_name["image_ref1"] = new \CURLFile(ROOT_PATH.'/public/'.$data['image_ref1']);
-        if(!empty($data['image_ref2'])) $tmp_name["image_ref2"] = new \CURLFile(ROOT_PATH.'/public/'.$data['image_ref2']);
-        if(!empty($data['image_ref3'])) $tmp_name["image_ref3"] = new \CURLFile(ROOT_PATH.'/public/'.$data['image_ref3']);
+        if(!empty($data['image_ref1'])) $tmp_name["image_ref1"] = new \CURLFile(config('file_path.retire_path').str_replace('/retire_img?path=', '', $data['image_ref1']));
+        if(!empty($data['image_ref2'])) $tmp_name["image_ref2"] = new \CURLFile(config('file_path.retire_path').str_replace('/retire_img?path=', '', $data['image_ref2']));
+        if(!empty($data['image_ref3'])) $tmp_name["image_ref3"] = new \CURLFile(config('file_path.retire_path').str_replace('/retire_img?path=', '', $data['image_ref3']));
+        
+        unset($data['image']);
+
+        $post_data = array_merge($data, $tmp_name);
+        
+        $ch = curl_init();
+        curl_setopt($ch , CURLOPT_URL , $url);
+        curl_setopt($ch , CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch , CURLOPT_POST, 1);
+        curl_setopt($ch , CURLOPT_POSTFIELDS, $post_data);
+        curl_setopt($ch , CURLOPT_SSL_VERIFYPEER, false);
+        $output= curl_exec($ch);
+        if(curl_errno($ch)){
+            rjson('', '400', curl_error($ch));
+        }
+        curl_close($ch);
+     
+        echo $output;
+    }
+    
+    public function card_jsonp(){
+        $url = input('post.url');
+        $data = input('post.');
+        unset($data['url']);
+        
+        $tmp_name = array(
+            //要上传的本地文件地址
+            "image" => new \CURLFile(config('file_path.card_path').str_replace('/card_img?path=', '', $data['image'])),
+        );
+        
+        if(!empty($data['image_ref1'])) $tmp_name["image_ref1"] = new \CURLFile(config('file_path.card_path').str_replace('/card_img?path=', '', $data['image_ref1']));
+        if(!empty($data['image_ref2'])) $tmp_name["image_ref2"] = new \CURLFile(config('file_path.card_path').str_replace('/card_img?path=', '', $data['image_ref2']));
+        if(!empty($data['image_ref3'])) $tmp_name["image_ref3"] = new \CURLFile(config('file_path.card_path').str_replace('/card_img?path=', '', $data['image_ref3']));
         
         unset($data['image']);
         
@@ -142,12 +175,6 @@ class  Publics extends Controller
             rjson('', '400', curl_error($ch));
         }
         curl_close($ch);
-        
-        //删除图片
-//         unlink(ROOT_PATH.'/public/'.input('post.image'));
-//         if(!empty($data['image_ref1'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref1'));
-//         if(!empty($data['image_ref2'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref2'));
-//         if(!empty($data['image_ref3'])) unlink(ROOT_PATH.'/public/'.input('post.image_ref3'));
         
         echo $output;
     }
