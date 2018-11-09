@@ -30,11 +30,11 @@ class Social extends Common
             case '4':
                 rjson(['card_id'=>$return['card_id']], '203', '证件照审核不通过');
                 break;
-            case '6':
+            case '5':
                 rjson('', '204', '该用户办理次数已达到3次');
                 break;
             default:
-                rjson('', '400', '此身份信息已经有办理/申请记录,不可继续申请了!');
+                rjson('', '400', '该人员已采集社保卡信息，请到历史社保卡进度查询详情！');
         }       
     }
     

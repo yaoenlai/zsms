@@ -52,7 +52,7 @@ class  Publics extends Controller
     }
     //获取省市区
     public function getArea(){
-        $parent_id = empty(input('post.parent_id')) ? 0 : input('post.parent_id');
+        $parent_id = empty(input('post.parent_id')) ? 100000 : input('post.parent_id');
         $where = [
             'PARENT_ID' => $parent_id,
         ];
@@ -107,7 +107,17 @@ class  Publics extends Controller
             ,'c.C_CODE'   => input('post.code') 
         ];
         $list = db('Card')->alias('c')
-            ->field('c.C_NAME,c.C_CODE,c.EXAM_STATUS,c.IS_IMPORT,c.IS_IMPORT,CASE WHEN c.IS_IMPORT=1 THEN c.PULL_ADDRESS ELSE d.ADDRESS END AS ADDRESS')
+            ->field("
+                c.C_NAME,c.C_CODE,c.EXAM_STATUS,c.IS_IMPORT,c.IS_EXPRESS
+                ,CASE 
+                	WHEN c.IS_IMPORT=1 THEN c.PULL_ADDRESS 
+                	WHEN c.IS_IMPORT=0 THEN 
+                		CASE 
+                			WHEN c.IS_EXPRESS=3 THEN d.ADDRESS 
+                			ELSE '自提/未选择'
+                		END
+                END AS ADDRESS
+            ")
             ->join('sb_dot d', 'd.ID=c.D_ID', 'LEFT')
             ->where($where)->select();
         rjson($list);

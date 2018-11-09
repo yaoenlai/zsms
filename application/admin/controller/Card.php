@@ -114,11 +114,30 @@ class Card extends Common
     //获取社保申请详情
     public function detail(){
         
+        if( empty(input("post.card_id")) ){
+            rjson_error('参数传输有空');
+        }
+        
         $info = [];
         
-        $info['card_info'] = db('Card')->where(['ID' => input("post.card_id")])->find();
+        $where = [
+            'ID' => input("post.card_id")
+        ];
+        $info['card_info'] = db('Card')->where($where)->find();
         //详细信息
-        $info['card_detail'] = db("CardOrderBak")->where(['PREPAY_ID' => input("post.prepay_id")])->find();
+        if(empty(input("post.prepay_id"))){
+            $where = [
+                'C_CODE'   => $info['card_info']['C_CODE']
+            ];
+        } else {
+            $where = [
+                'PREPAY_ID' => input("post.prepay_id")
+            ];
+        }
+        $info['card_detail'] = db("CardOrderBak")->where($where)->find();
+        if(empty($info['card_detail'])){
+            rjson_error('详情信息不存在');
+        }
         if($info['card_detail']['C_SEX'] == '1'){
             $info['card_detail']['C_SEX_NAME'] = '男';
         } elseif ($info['card_detail']['C_SEX'] == '2'){
@@ -127,13 +146,19 @@ class Card extends Common
         if($info['card_detail']['TYPE'] != '1'){
             //监督人信息
             $info['guardian_detail'] = db('guardian')->where(['PID' => input("post.card_id")])->find();
+            if(empty($info['guardian_detail'])){
+                rjson_error('监督人信息不存在');
+            }
             if($info['guardian_detail']['GUARDIAN_SEX'] == '1'){
                 $info['guardian_detail']['GUARDIAN_SEX_NAME'] = '男';
             } elseif ($info['guardian_detail']['GUARDIAN_SEX'] == '2'){
                 $info['guardian_detail']['GUARDIAN_SEX_NAME'] = '女';
             }
+            
+            if(empty($info['card_detail']['RESIDENCE_IMG'])){
+                $info['card_detail']['RESIDENCE_IMG'] = ",";
+            }
         }
-        
         rjson($info);
     }   
     

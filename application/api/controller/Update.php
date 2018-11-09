@@ -7,6 +7,7 @@ class Update extends Controller
 {
     public function update_file()
     {
+        file_put_contents('./file.txt', json_encode($_FILES));
         // 获取表单上传文件 例如上传了001.jpg
         $file = request()->file('file');
         

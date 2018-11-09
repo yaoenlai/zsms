@@ -132,7 +132,7 @@ class Card extends Model
                             /* 修改已添加的监护人信息 */
                             db('guardian')->where(['PID'=>input('post.card_id')])->update(['PID'=>$card_id]);
                             /* 修改已添加邮寄的社保号 */
-                            db('CardMail')->where(['CARD_ID'=>input('post.card_id'), 'TYPE'=>'1'])->update(['CARD_ID'=>$card_id]);
+                            db('CardMail')->where(['CARD_ID'=>input('post.card_id'), 'TYPE'=>'1'])->update(['CARD_ID'=>$card_id,'PREPAY_ID'=>$number]);
                         }
                         Db::commit(); 
                         rjson(array("prepay_id"=>$number,"numbers"=>$numbers));
@@ -256,6 +256,17 @@ class Card extends Model
     
     //社保邮寄订单
     public function addMailOrder($u_id, $cardInfo){
+        //判断社保卡邮寄单是否有生成
+        $where = [
+            'U_ID'      => $u_id
+            ,'CARD_ID'  => $this->_postData['card_id']
+        ];
+        $card_mail_info = db('CardMail')->where($where)->find();
+        if(!empty($card_mail_info)){
+            rjson(['mail_id'=>$card_mail_info['ID'], 'prepay_id'=>$card_mail_info['PREPAY_ID']], '400', '该信息已存在，请去邮寄列表查看');
+        }
+        
+        //生成社保卡邮寄订单
         Db::startTrans();
         try {
             /*订单信息开始*/
