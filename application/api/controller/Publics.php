@@ -5,6 +5,15 @@ use think\Controller;
 
 class  Publics extends Controller
 {
+    //获取最新版本号
+    public function getVersion(){
+        $where = [
+            'TYPE'  => input('post.type')
+        ];
+        $info = db("Version")->where($where)->order('CREATE_TIME DESC')->find();
+        rjson($info);
+    }
+    
     //获取协议信息
     public function get_card_protocol(){
         

@@ -238,6 +238,7 @@ class Card extends Model
                     $insert['HEAD_IMG']         = $this->_postData['head_img'];
                 }
                 $insert['C_UPDATE_TIME']    = time();
+                $insert['C_UPDATE_DATE']    = date("Y-m-d H:i:s");
                 $insert['EXAM_STATUS']      = 1;
                 if( db('card')->where($where)->update($insert) ){
                     Db::commit();
@@ -258,12 +259,15 @@ class Card extends Model
     public function addMailOrder($u_id, $cardInfo){
         //判断社保卡邮寄单是否有生成
         $where = [
-            'U_ID'      => $u_id
-            ,'CARD_ID'  => $this->_postData['card_id']
+            'CARD_ID'  => $this->_postData['card_id']
         ];
         $card_mail_info = db('CardMail')->where($where)->find();
         if(!empty($card_mail_info)){
-            rjson(['mail_id'=>$card_mail_info['ID'], 'prepay_id'=>$card_mail_info['PREPAY_ID']], '400', '该信息已存在，请去邮寄列表查看');
+            rjson(['mail_id'=>$card_mail_info['ID'], 'prepay_id'=>$card_mail_info['PREPAY_ID']], '210', '该信息已存在，请去邮寄列表查看');
+        }
+        
+        if( empty($this->_postData['address_id']) || empty($this->_postData['express_id']) ){
+            rjson('', '400', '传入信息不全,请检查是否未选择收货地址或选择邮寄方式');
         }
         
         //生成社保卡邮寄订单

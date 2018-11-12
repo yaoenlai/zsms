@@ -10,7 +10,10 @@ class Card extends Common
         ];
         
         if(!empty(input('post.code'))){
-            $where['C_CODE'] = array("LIKE", '%'.input('post.code').'%');
+            $where['C_CODE|U_CARDS'] = array("LIKE", '%'.input('post.code').'%');
+        }
+        if(!empty(input('post.name'))){
+            $where['C_NAME|U_NAME'] = array("LIKE", '%'.input('post.name').'%');
         }
         if(!empty(input('post.status'))){
             $where['EXAM_STATUS'] = array("EQ", input('post.status'));
@@ -30,6 +33,10 @@ class Card extends Common
         }
         if( !empty(input('post.date_value_0')) && !empty(input('post.date_value_1')) ){
             $where['C_ADD_TIME'] = array('BETWEEN',array(input('post.date_value_0'),input('post.date_value_1')));
+        } elseif ( !empty(input('post.date_value_0')) ){
+            $where['C_ADD_TIME'] = array('EGT', input('post.date_value_0'));
+        } elseif ( !empty(input('post.date_value_1')) ){
+            $where['C_ADD_TIME'] = array('ELT', input('post.date_value_1'));
         }
         $page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
         $page_size = empty(input('post.page_size')) ? "20" : input("post.page_size");
@@ -138,16 +145,12 @@ class Card extends Common
         if(empty($info['card_detail'])){
             rjson_error('详情信息不存在');
         }
-        if($info['card_detail']['C_SEX'] == '1'){
-            $info['card_detail']['C_SEX_NAME'] = '男';
-        } elseif ($info['card_detail']['C_SEX'] == '2'){
-            $info['card_detail']['C_SEX_NAME'] = '女';
-        }
+
         if($info['card_detail']['TYPE'] != '1'){
             //监督人信息
             $info['guardian_detail'] = db('guardian')->where(['PID' => input("post.card_id")])->find();
             if(empty($info['guardian_detail'])){
-                rjson_error('监督人信息不存在');
+                rjson_error('监护人信息不存在');
             }
             if($info['guardian_detail']['GUARDIAN_SEX'] == '1'){
                 $info['guardian_detail']['GUARDIAN_SEX_NAME'] = '男';
@@ -162,10 +165,13 @@ class Card extends Common
         rjson($info);
     }   
     
-    //修改参保区域
-    public function area_edit(){
+    //修改
+    public function edit(){
         $data = [
-            'AREA'  => input('post.AREA')
+            'AREA'          => input('post.AREA')
+            ,'INSURANCE'    => input('post.INSURANCE')
+            ,'C_SEX'        => input('post.C_SEX')
+            ,'C_NATION'     => input('post.C_NATION')
         ];
         $where = [
             'ID'    => input('post.ID')
@@ -194,6 +200,15 @@ class Card extends Common
     public function getDot(){
         $where = [];
         $list = db("Dot")->where($where)->select();
+        rjson($list);
+    }
+    
+    //获取险种
+    public function getXz(){
+        $where = [
+            'STATUS'    => '2'
+        ];
+        $list = db("RetireInsurance")->where($where)->select();
         rjson($list);
     }
 }

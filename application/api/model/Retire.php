@@ -92,6 +92,8 @@ class Retire extends Model
             ,'PERIOD'       => db('Policy')->where($where3)->value('PERIOD')
             ,'SOURCE_IMG'   => $data['source_img']
             ,"TYPE"         => $data['type']
+            ,'FRONT_IMG'    => $data['front_img']
+            ,'OPPOSITE_IMG' => $data['opposite_img']
         ];
         if( db("Retire")->where($where)->update($save_data) ){
             return true;
