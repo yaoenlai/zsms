@@ -255,6 +255,40 @@ class Card extends Model
         }
     }
     
+    //上传2寸照片(申请完成)
+    public function update_head_img($u_id){
+        $data = input('post.');        
+        
+        $save['HEAD_IMG']= $data['head_img'];
+        $save['STEP_STSTUS'] = 1 ;
+        $save['EXAM_STATUS'] = 1 ;
+        $save['IS_DOWN'] = 1 ;
+        
+        $where = [
+            "id" => $data['card_id'],
+        ];
+        
+        Db::startTrans();
+        try{
+            if( db('card')->where($where)->update($save) ){
+                
+                if ( msg_add('社保卡办理', '您的社保卡申请资料已经提交,请等待审核', $u_id) ){
+                    /*极光推送*/
+                    //                     pushMessages($find_user['JPUSH_ID'],'您的社保卡申请资料已经提交,请等待审核');
+                    Db::commit();
+                    rjson('您的社保卡申请资料已经全部提交完成,请等待审核');
+                } else {
+                    exception(showRegError(-16).'[2]');
+                }
+            } else {
+                exception(showRegError(-16),'[1]');
+            }
+        } catch (\Exception $e){
+            Db::rollback();
+            rjson('', '400', $e->getMessage());
+        }
+    }
+    
     //社保邮寄订单
     public function addMailOrder($u_id, $cardInfo){
         //判断社保卡邮寄单是否有生成

@@ -78,6 +78,9 @@ function user_msg($uid,$title,$content,$type){
 function get_price($type=''){
     $where = [];
     $list = db('SetPrice')->where($where)->select();
+    foreach ($list AS $key=>$value){
+        $list[$key]["PRICE"] = sprintf("%.2f", $value['PRICE']);
+    }
     if(!empty($type)){
         foreach ($list as $key=>$value){
             if($value['TYPE'] == $type){

@@ -82,7 +82,7 @@ class Verifiy extends Model
             $rand_num = rand(100000,999999);
             $sendHxrt = new SendHxrt($phone,$rand_num);
             $back_return = $sendHxrt->sendSMS();
-            dump($back_return);die;
+//             dump($back_return);die;
             if( $back_return == '0'){
                 //如果发送成功
                 $insert['PHONE'] = $phone ;

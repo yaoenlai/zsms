@@ -6,7 +6,6 @@ namespace app\api\controller;
 
 use think\Controller;
 use app\api\model\Card;
-use think\Db;
 use app\api\model\Retire;
 
 class Social extends Common
@@ -168,37 +167,8 @@ class Social extends Common
     
     //上传2寸照片(申请完成)
     public function update_head_img(){
-        
-        $data = input('post.');
-        
-        $save['HEAD_IMG']= $data['head_img'];
-        $save['STEP_STSTUS'] = 1 ;
-        $save['EXAM_STATUS'] = 1 ;
-        $save['IS_DOWN'] = 1 ;
-        
-        $where = [ 
-            "id" => $data['card_id'],
-        ];
-        
-        Db::startTrans();
-        try{
-            if( db('card')->where($where)->update($save) ){
-                
-                if ( msg_add('社保卡办理', '您的社保卡申请资料已经提交,请等待审核', $this->_loginInfo['U_ID']) ){
-                    /*极光推送*/
-//                     pushMessages($find_user['JPUSH_ID'],'您的社保卡申请资料已经提交,请等待审核');
-                    Db::commit();
-                    rjson('您的社保卡申请资料已经全部提交完成,请等待审核');
-                } else {
-                    exception(showRegError(-16).'[2]');
-                }                              
-            } else {
-                exception(showRegError(-16),'[1]');
-            }
-        } catch (\Exception $e){
-            Db::rollback();
-            rjson('', '400', $e->getMessage());
-        }
+               
+        (new Card())->update_head_img($this->_loginInfo['U_ID']);
     }
     
     //获取已提交社保列表

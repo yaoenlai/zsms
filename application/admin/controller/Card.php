@@ -118,6 +118,22 @@ class Card extends Common
         }
     }
     
+    //未填写监护人，拒绝审核
+    public function refuse_examine(){
+        $where = [
+            'ID'    => input('post.card_id'),
+        ];
+        $save = [
+            'STEP_STSTUS'   => '2'
+            ,'EXAM_INFO'    => input('post.exam_info')
+        ];
+        if(db("Card")->where($where)->update($save)){
+            rjson('修改成功');
+        } else {
+            rjson_error('修改状态失败');
+        }
+    }
+    
     //获取社保申请详情
     public function detail(){
         
