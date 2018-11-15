@@ -13,7 +13,7 @@ class Common extends Controller
     protected $_where=[];       //查询条件
     protected $_order='ADDTIME DESC';   //排序       
     
-    private $_model;    
+    protected $_model;    
     
     public function _initialize(){
         if(request()->isPost()){

@@ -25,7 +25,13 @@ class Card extends Model
             ,'IS_LOCK'  => '1'
         ];
         $card_detail = db("CardOrderBak")->where($where)->find();
+        
         if(empty($card_detail)){
+            //验证是否导入
+            if( db("Card")->where($where)->count() > 0){
+                return ['status'=> 'detail'];
+            }      
+            
             //验证社保办理数量
             $where = [
                 'U_ID'    => $u_id
@@ -35,7 +41,7 @@ class Card extends Model
                 return ['status'=> '5'];
             } else {
                 return ['status'=>'1'];
-            }
+            }      
         }
         //验证社保号是否已支付
         $where = [

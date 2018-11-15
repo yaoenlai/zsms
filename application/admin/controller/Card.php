@@ -38,13 +38,12 @@ class Card extends Common
         } elseif ( !empty(input('post.date_value_1')) ){
             $where['C_ADD_TIME'] = array('ELT', input('post.date_value_1'));
         }
-        $page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
-        $page_size = empty(input('post.page_size')) ? "20" : input("post.page_size");
         
-        $data = [];
-        $data['list'] = db("card2")->where($where)->limit($page_size)->page($page_index)->order("C_ADD_TIME DESC")->select();
-        $data['total'] = db("card2")->where($where)->count();
-        rjson($data);
+        $this->_where = $where;
+        $this->_order = 'C_ADD_TIME DESC';
+        $this->_model = "Card2";
+        
+        parent::list();
     }
     
     //修改状态
@@ -124,7 +123,7 @@ class Card extends Common
             'ID'    => input('post.card_id'),
         ];
         $save = [
-            'STEP_STSTUS'   => '2'
+            'EXAM_STATUS'   => '2'
             ,'EXAM_INFO'    => input('post.exam_info')
         ];
         if(db("Card")->where($where)->update($save)){
@@ -168,15 +167,11 @@ class Card extends Common
             if(empty($info['guardian_detail'])){
                 rjson_error('监护人信息不存在');
             }
-            if($info['guardian_detail']['GUARDIAN_SEX'] == '1'){
-                $info['guardian_detail']['GUARDIAN_SEX_NAME'] = '男';
-            } elseif ($info['guardian_detail']['GUARDIAN_SEX'] == '2'){
-                $info['guardian_detail']['GUARDIAN_SEX_NAME'] = '女';
-            }
-            
+           
             if(empty($info['card_detail']['RESIDENCE_IMG'])){
                 $info['card_detail']['RESIDENCE_IMG'] = ",";
             }
+            
         }
         rjson($info);
     }   
@@ -225,6 +220,15 @@ class Card extends Common
             'STATUS'    => '2'
         ];
         $list = db("RetireInsurance")->where($where)->select();
+        rjson($list);
+    }
+    
+    //获取关系
+    public function getRelation(){
+        $where = [
+            
+        ];
+        $list = db("Relation")->where($where)->select();
         rjson($list);
     }
 }

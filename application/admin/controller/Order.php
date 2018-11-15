@@ -17,6 +17,9 @@ class Order extends Common
         if(!empty(input('post.payment'))){
             $where['PAYMENT'] = array("EQ", input('post.payment'));
         }
+        if(!empty(input('post.pay_status'))){
+            $where['STATUS'] = array("EQ", input('post.pay_status'));
+        }
         
         if( !empty(input('post.min_price')) && !empty(input('post.max_price')) ){
             $where['PRICE'] = array('BETWEEN',array(input('post.min_price'),input('post.max_price')));
@@ -24,20 +27,21 @@ class Order extends Common
             $where['PRICE'] = array("EGT", input('post.min_price'));
         } elseif (!empty(input('post.max_price'))){
             $where['PRICE'] = array("ELT", input('post.max_price'));
-        }
+        }        
         
         if( !empty(input('post.date_value_0')) && !empty(input('post.date_value_1')) ){
-            $where['finish_time'] = array('BETWEEN',array(input('post.date_value_0'),input('post.date_value_1')));
+            $where['FINISH_TIME'] = array(array('EGT', input('post.date_value_0')), array('ELT',input('post.date_value_1')) );
+        } elseif ( !empty(input('post.date_value_0')) ){
+            $where['FINISH_TIME'] = array('EGT', input('post.date_value_0'));
+        } elseif ( !empty(input('post.date_value_1')) ){
+            $where['FINISH_TIME'] = array('ELT', input('post.date_value_1'));
         }
         
-        $page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
-        $page_size = empty(input('post.page_size')) ? "20" : input("post.page_size");
+        $this->_order = "FINISH_TIME DESC";
+        $this->_where = $where;
+        $this->_model = "Order2";
         
-        $data = [];
-        $data['list'] = db("Order2")->where($where)->limit($page_size)->page($page_index)->order('CREATE_TIME DESC')->select();
-        $data['total'] = db('Order2')->where($where)->count();
-        
-        rjson($data);
+        parent::list();
     }
     
     //统计订单

@@ -95,6 +95,11 @@ class Retire extends Model
             ,'FRONT_IMG'    => $data['front_img']
             ,'OPPOSITE_IMG' => $data['opposite_img']
         ];
+        
+        /* 单位 */
+        if(!empty($data['comp_code'])) $save_data['COMP_CODE'] = $data['comp_code'];
+        if(!empty($data['comp_name'])) $save_data['COMP_NAME'] = $data['comp_name'];
+        
         if( db("Retire")->where($where)->update($save_data) ){
             return true;
         } else {

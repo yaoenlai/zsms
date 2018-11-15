@@ -4,7 +4,7 @@ namespace app\admin\controller;
 class Retire extends Common 
 {
     public function list(){
-        $this->_order = 'CREATE_DATE DESC';
+        
         $where = [];
         if(!empty(input('post.code'))){
             $where['CODE']  = array("LIKE", '%'.input('post.code').'%');
@@ -29,9 +29,16 @@ class Retire extends Common
             $where['AREA']  = array("EQ", input('post.zone_code'));
         }
         if( !empty(input('post.date_value_0')) && !empty(input('post.date_value_1')) ){
-            $where['CREATE_DATE'] = array('BETWEEN',array(input('post.date_value_0'),input('post.date_value_1')));
+            $where['CREATE_TIME'] = array(array('EGT', input('post.date_value_0')), array('ELT',input('post.date_value_1')) );
+        } elseif ( !empty(input('post.date_value_0')) ){
+            $where['CREATE_TIME'] = array('EGT', input('post.date_value_0'));
+        } elseif ( !empty(input('post.date_value_1')) ){
+            $where['CREATE_TIME'] = array('ELT', input('post.date_value_1'));
         }
+        
         $this->_where = $where;
+        $this->_order = 'CREATE_TIME DESC';
+        $this->_model = "RetireList";
         
         parent::list();
     }
@@ -59,7 +66,7 @@ class Retire extends Common
         //获取基本信息
         $data['info'] = db('RetireInfo')->where(['CODE'=>input('post.code')])->find();
         //获取活体对比记录
-        $data['face'] = db("RetireFace")->where(['PID'=>input('post.id')])->select();
+        $data['face'] = db("RetireFace")->where(['PID'=>input('post.id')])->order("CREATE_TIME DESC")->select();
         //获取详细信息
         $data['detail'] = db('Retire')->where(['ID'=>input('post.id')])->find();
         
