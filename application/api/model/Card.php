@@ -122,7 +122,7 @@ class Card extends Model
                 $insert_bak['OPPOSITE_IMG']     = $this->_postData['opposite_img'];
                 $insert_bak['INSURANCE']        = $this->_postData['insurance'];
                 if( ($this->_postData['peo_type'] == '2') || ($this->_postData['peo_type'] == '3')){
-                    $insert_bak['RESIDENCE_IMG']    = $this->_postData['residence_img'];
+                    $insert_bak['RESIDENCE_IMG']    = empty($this->_postData['residence_img']) ? '' : $this->_postData['residence_img'];
                 }
                 if( db('CardOrderBak')->insert($insert_bak) ){
                     

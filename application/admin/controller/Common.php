@@ -51,6 +51,7 @@ class Common extends Controller
         $instal_data = array_change_key_case($data, CASE_UPPER );
         
         if ( db($this->_model)->insert($instal_data) ){
+            behavior('app_init', $this->admin_id, $this->_model, '1', [], $instal_data);
             rjson('添加成功');
         } else {
             rjson_error('添加失败');
@@ -59,8 +60,10 @@ class Common extends Controller
     
     //删除
     public function del(){
-       
-        if( db($this->_model)->where(['ID'=>input('post.id')])->update(['IS_LOCK'=>'0']) ){
+        $where = empty($this->_where) ? ['ID'=>input('post.id')] : $this->_where;
+        
+        if( db($this->_model)->where($where)->update(['IS_LOCK'=>'0']) ){
+            behavior('app_init', $this->admin_id, $this->_model, '31', $where);
             rjson('删除成功');
         } else {
             rjson_error('删除失败');
@@ -69,7 +72,11 @@ class Common extends Controller
     
     //还原
     public function rel(){
-        if( db($this->_model)->where(['ID'=>input('post.id')])->update(['IS_LOCK'=>'1']) ){
+        
+        $where = empty($this->_where) ? ['ID'=>input('post.id')] : $this->_where;
+        
+        if( db($this->_model)->where($where)->update(['IS_LOCK'=>'1']) ){
+            behavior('app_init', $this->admin_id, $this->_model, '32', $where);
             rjson('恢复成功');
         } else {
             rjson_error('恢复失败');
@@ -83,8 +90,10 @@ class Common extends Controller
         $data['UPDATE_ID'] = $this->admin_id;
         
         $save_data = array_change_key_case($data, CASE_UPPER );
-        
-        if( db($this->_model)->where(['ID'=>input('post.ID')])->update($save_data) ){
+        $where = empty($this->_where) ? ['ID'=>input('post.id')] : $this->_where;
+        if( db($this->_model)->where($where)->update($save_data) ){
+            
+            behavior('app_init', $this->admin_id, $this->_model, '2', $where, $save_data);
             rjson('修改成功');
         } else {
             rjson_error('修改失败');
@@ -93,14 +102,14 @@ class Common extends Controller
     
     //列表
     public function list(){
-        
         $page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
         $page_size = empty(input('post.page_size')) ? "20" : input("post.page_size");
         
-        $data = [];
+        $data = [];       
         $data['list'] = db($this->_model)->where($this->_where)->limit($page_size)->page($page_index)->order($this->_order)->select();
         $data['total'] = db($this->_model)->where($this->_where)->count();
         
+//         behavior('app_init', $this->admin_id, $this->_model, '4', $this->_where);
         rjson($data);
     }
 }

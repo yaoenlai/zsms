@@ -69,14 +69,21 @@ class Card extends Common
             $templateProcessor->setValue('ID', $info['ID']);
             $templateProcessor->setValue('C_CODE', $info['C_CODE']);
             $templateProcessor->setValue('C_NAME', $info['C_NAME']);
-            $templateProcessor->setValue('C_SEX', $info['C_SEX']);
-            $templateProcessor->setValue('C_NATION', $info['C_NATION']);
+            $templateProcessor->setValue('C_SEX', $info['C_SEX_NAME']);
+            $templateProcessor->setValue('C_NATION', $info['C_NATION_NAME']);
             $templateProcessor->setValue('C_BIRTHDAY', $info['C_BIRTHDAY']);
             $templateProcessor->setValue('C_PHONE', $info['C_PHONE']);
             $templateProcessor->setValue('C_END_TIME', $info['C_END_TIME']);
             $templateProcessor->setValue('C_ADDRESS', $info['C_ADDRESS']);
             $templateProcessor->setValue('GUARDIAN_NAME', $info['GUARDIAN_NAME']);
             $templateProcessor->setValue('GUARDIAN_CARD', $info['GUARDIAN_CARD']);
+            if(empty($info['HEAD_IMG']))  rjson_error('二寸照未录入');
+            
+            $templateProcessor->setImg('HEAD_IMG', array(
+                'src'=>config('file_path.card_path').str_replace('/card_img?path=', '', $info['HEAD_IMG']),
+                'size' => array( 150, 150 ) //图片大小，单位px
+            ));
+            
             //大于16岁的才有身份证
             if($info['TYPE'] == '1'){
                 $templateProcessor->setImg('FRONT_IMG', array(
@@ -93,7 +100,6 @@ class Card extends Common
             if(mkdirs($path)){
                 $templateProcessor->saveAs($path);
             }
-            
             msg_add('社保卡办理', '社保卡办理审核通过', $u_id);
         }
         if($data['exam_status'] == '6'){

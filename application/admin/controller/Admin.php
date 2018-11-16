@@ -21,6 +21,7 @@ class Admin extends Common
         $instal_data = array_change_key_case($data, CASE_UPPER );
         
         if ( db('Admin')->insert($instal_data) ){
+            behavior('app_init', $this->admin_id, 'Admin', '1', [], $instal_data);
             rjson('添加成功');
         } else {
             rjson_error('添加失败');
@@ -30,35 +31,25 @@ class Admin extends Common
     //删除
     public function del(){
         
-        if( db('Admin')->where(['ADMIN_ID'=>input('post.id')])->update(['IS_LOCK'=>'0']) ){
-            rjson('删除成功');
-        } else {
-            rjson_error('删除失败');
-        }
+        $this->_where = ['ADMIN_ID'=>input('post.id')];
+        
+        parent::del();
     }
     
     //还原
     public function rel(){
-        if( db('Admin')->where(['ADMIN_ID'=>input('post.id')])->update(['IS_LOCK'=>'1']) ){
-            rjson('恢复成功');
-        } else {
-            rjson_error('恢复失败');
-        }
+        
+        $this->_where = ['ADMIN_ID'=>input('post.id')];
+        
+        parent::rel();
     }
     
     //修改
     public function save(){
-        $data = input("post.");
-        $data['UPDATE_TIME'] = date("Y-m-d H:i:s", time());
-        $data['UPDATE_ID'] = $this->admin_id;
         
-        $save_data = array_change_key_case($data, CASE_UPPER );
+        $this->_where = ['ADMIN_ID'=>input('post.ADMIN_ID')];
         
-        if( db('Admin')->where(['ADMIN_ID'=>input('post.ADMIN_ID')])->update($save_data) ){
-            rjson('修改成功');
-        } else {
-            rjson_error('修改失败');
-        }
+        parent::save();
     }
     
     //个人信息
@@ -81,6 +72,7 @@ class Admin extends Common
             'admin_id'  => $this->admin_id,
         ];
         if( db("Admin")->where($where)->update($data) ){
+            behavior('app_init', $this->admin_id, 'Admin', '2', $where, $data);
             rjson('修改成功');
         } else {
             rjson('', '400', '修改失败');
@@ -105,6 +97,7 @@ class Admin extends Common
             'PWD'   => md5($data['newPassWord']),
         ];
         if( db('Admin')->where($where)->update($save_data) ){
+            behavior('app_init', $this->admin_id, 'Admin', '2', $where, $save_data);
             rjson('修改成功');
         } else {
             rjson('', '400', '修改失败');
