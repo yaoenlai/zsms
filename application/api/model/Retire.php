@@ -94,6 +94,8 @@ class Retire extends Model
             ,"TYPE"         => $data['type']
             ,'FRONT_IMG'    => $data['front_img']
             ,'OPPOSITE_IMG' => $data['opposite_img']
+            ,'PERIOD_TIME'  => time()
+            ,'PERIOD_DATE'  => date("Y-m-d H:i:s")
         ];
         
         /* 单位 */

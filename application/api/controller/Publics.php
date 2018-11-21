@@ -132,6 +132,42 @@ class  Publics extends Controller
         rjson($list);
     }
     
+    //获取SEO
+    public function getSeo(){
+        $list = [];
+        
+        //当日0点的时间
+        $dateStr = date('Y-m-d', time());
+        $timestamp0 = strtotime($dateStr);
+        //当日24点的时间
+        $timestamp24 = strtotime($dateStr) + 86400; 
+        
+        $user_where = [
+            'REG_TIME'  => array('BETWEEN',array($timestamp0 , $timestamp24))
+        ];     
+        $list['USER']['COUNT'] = db('User')->count();
+        $list['USER']['COUNT_DAY'] = db('User')->where($user_where)->count();
+        
+        $card_where = [
+            'IS_LOCK'       => '1'
+            ,'C_ADD_TIME'   => array(array('EGT', $timestamp0), array('ELT', $timestamp24))
+        ];
+        $list['CARD']['COUNT_DAY'] = db('Card')->where($card_where)->count();
+        $card_where = [
+            'IS_LOCK'       => '1'
+            ,'EXAM_TIME'    => array(array('EGT', $timestamp0), array('ELT', $timestamp24))
+        ];
+        $list['CARD']['COUNT_DAY_EXAM'] = db('Card')->where($card_where)->count();
+        
+        $retire_where = [
+            'IS_LOCK'       => '1'
+            ,'LIVE_STATUS'  => '1'
+            ,'PERIOD_TIME'  => array(array('EGT', $timestamp0), array('ELT', $timestamp24))
+        ];
+        $list['RETIRE']['COUNT_DAY_PERIOD'] = db('Retire')->where($retire_where)->count();
+        rjson($list);
+    }
+    
     public function jsonp(){
         $url = input('post.url');
         $data = input('post.');

@@ -101,6 +101,9 @@ class Card extends Common
                 $templateProcessor->saveAs($path);
             }
             msg_add('社保卡办理', '社保卡办理审核通过', $u_id);
+            
+            $save['EXAM_TIME']  = time();
+            $save['EXAM_ID']    = $this->admin_id;
         }
         if($data['exam_status'] == '6'){
             $email_save = [
@@ -120,6 +123,9 @@ class Card extends Common
         $where = [
             'ID'=>$data['ID']
         ];
+        $save['UPDATE_TIME']    = time();
+        $save['UPDATE_ID']      = $this->admin_id;
+        
         if( db("Card")->where($where)->update($save) ){
             behavior("app_init", $this->admin_id, 'CardMail', '2', $where, $save);
             rjson('修改成功');
