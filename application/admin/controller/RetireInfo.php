@@ -38,10 +38,10 @@ class RetireInfo extends Common
     public function get_source_img(){
         if(empty(input('post.code'))) rjson_error('身份证号码为空');
         
-        $path = "/source_img/admin/".input('post.code').".jpg";
-        if(mkdirs($path)){
+        $path = "/retire_img/source_img/admin/".input('post.code').".jpg";
+        if(mkdirs( config('file_path.retire_path').$path)){
             if(get_source_img(input('post.code'), config('file_path.retire_path').$path)){
-                rjson("retire_img?path=".$path);
+                rjson("/retire_img?path=".$path);
             } else {
                 rjson_error('获取源照片失败');
             }
