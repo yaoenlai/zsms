@@ -42,7 +42,35 @@ class Retire extends Common
         
         parent::list();
     }
-      
+    
+    public function authentication(){
+        $where = [
+            'ID'    => input('post.ID')
+        ];
+        $save_data = [
+            'LIVE_STATUS'   => 1
+        ];
+        if( db("Retire")->where($where)->update($save_data) ){
+            msg_add('退休认证', '退休认证手动认证通过', input('post.U_ID'));
+            rjson('手动认证通过');
+        } else {
+            rjson_error('未知错误');
+        }
+    }
+    
+    //获取详情
+    public function getDetail(){
+        $data = [];
+        //获取基本信息
+        $data['info'] = db('RetireInfo')->where(['CODE'=>input('post.code')])->find();
+        //获取活体对比记录
+        $data['face'] = db("RetireFace")->where(['PID'=>input('post.id')])->order("CREATE_TIME DESC")->select();
+        //获取详细信息
+        $data['detail'] = db('Retire')->where(['ID'=>input('post.id')])->find();
+        
+        rjson($data);
+    }
+    
     //获取退休险种
     public function getInsuranceList(){
         
@@ -60,31 +88,10 @@ class Retire extends Common
         rjson($list);
     }
     
-    //获取详情
-    public function getDetail(){
-        $data = [];
-        //获取基本信息
-        $data['info'] = db('RetireInfo')->where(['CODE'=>input('post.code')])->find();
-        //获取活体对比记录
-        $data['face'] = db("RetireFace")->where(['PID'=>input('post.id')])->order("CREATE_TIME DESC")->select();
-        //获取详细信息
-        $data['detail'] = db('Retire')->where(['ID'=>input('post.id')])->find();
-        
-        rjson($data);
-    }
-    
-    public function authentication(){
-        $where = [
-            'ID'    => input('post.ID')
-        ];
-        $save_data = [
-            'LIVE_STATUS'   => 1
-        ];
-        if( db("Retire")->where($where)->update($save_data) ){
-            msg_add('退休认证', '退休认证手动认证通过', input('post.U_ID'));
-            rjson('手动认证通过');
-        } else {
-            rjson_error('未知错误');
-        }
+    //获取民族
+    public function getMz(){
+        $where = [];
+        $list = db("Mz")->where($where)->select();
+        rjson($list);
     }
 }

@@ -55,7 +55,7 @@ class Card extends Common
         ];
         if($data['exam_status'] == '2'){
             $save['EXAM_INFO'] = $data['exam_info'];
-            if(!empty($data['refuse_status'])){
+            if($data['refuse_status'] == '2'){
                 $save['REFUSE_STATUS'] = 2;
             }
             msg_add('社保卡办理', '社保卡办理审核不通过['.$data['exam_info'].']', $u_id);
@@ -116,29 +116,37 @@ class Card extends Common
                 rjson("", "400", "订单号填写失败");
             }
         }
-        if( db("Card")->where(['ID'=>$data['ID']])->update($save) ){
-            rjson('修改成功');
-        } else {
-            rjson_error('修改状态失败');
-        }
-    }
-    
-    //未填写监护人，拒绝审核
-    public function refuse_examine(){
+        
         $where = [
-            'ID'    => input('post.card_id'),
+            'ID'=>$data['ID']
         ];
-        $save = [
-            'EXAM_STATUS'   => '2'
-            ,'EXAM_INFO'    => input('post.exam_info')
-        ];
-        if(db("Card")->where($where)->update($save)){
+        if( db("Card")->where($where)->update($save) ){
+            behavior("app_init", $this->admin_id, 'CardMail', '2', $where, $save);
             rjson('修改成功');
         } else {
             rjson_error('修改状态失败');
         }
     }
     
+    //修改
+    public function edit(){
+        $data = [
+            'AREA'          => input('post.AREA')
+            ,'INSURANCE'    => input('post.INSURANCE')
+            ,'C_SEX'        => input('post.C_SEX')
+            ,'C_NATION'     => input('post.C_NATION')
+        ];
+        $where = [
+            'ID'    => input('post.ID')
+        ];
+        
+        $this->_model = "CardOrderBak";
+        $this->_where = $where;
+        $this->_saveData = $data;
+        
+        $this->save();
+    }
+       
     //获取社保申请详情
     public function detail(){
         
@@ -181,25 +189,7 @@ class Card extends Common
         }
         rjson($info);
     }   
-    
-    //修改
-    public function edit(){
-        $data = [
-            'AREA'          => input('post.AREA')
-            ,'INSURANCE'    => input('post.INSURANCE')
-            ,'C_SEX'        => input('post.C_SEX')
-            ,'C_NATION'     => input('post.C_NATION')
-        ];
-        $where = [
-            'ID'    => input('post.ID')
-        ];
-        if( db("CardOrderBak")->where($where)->update($data) ){
-            rjson("修改成功");
-        } else {
-            rjson_error('修改失败');
-        }
-    }
-    
+        
     //获取参保区域
     public function getZone(){
         $where = [];

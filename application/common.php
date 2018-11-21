@@ -87,7 +87,7 @@ function getCItyName($countyID){
     }
 }
 
-/*
+/**
  * 生成随机字符串
  * @param int $length 生成随机字符串的长度
  * @param string $char 组成随机字符串的字符串

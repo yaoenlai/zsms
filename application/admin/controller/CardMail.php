@@ -4,24 +4,39 @@ namespace app\admin\controller;
 class CardMail extends Common
 {
     public function list(){
+
         $where = [];
+        if(!empty(input('post.c_name'))){
+            $where['C_NAME'] = array("LIKE", '%'.input('post.c_name').'%');
+        }
         if(!empty(input('post.code'))){
             $where['C_CODE'] = array("LIKE", '%'.input('post.code').'%');
         }
+        if(!empty(input('post.express_num'))){
+            $where['EXPRESS_NUM'] = array("LIKE", '%'.input('post.express_num').'%');
+        }
+        if(!empty(input('post.express_name'))){
+            $where['NAME'] = array("LIKE", '%'.input('post.express_name').'%');
+        }
+        if(!empty(input('post.is_pay'))){
+            $where['IS_PAY'] = array("EQ", input('post.is_pay'));
+        }
+        if(!empty(input('post.step_status'))){
+            $where['STEP_STSTUS'] = array("EQ", input('post.step_status'));
+        }
         if( !empty(input('post.date_value_0')) && !empty(input('post.date_value_1')) ){
-            $where['ADDTIME'] = array('BETWEEN',array(input('post.date_value_0'),input('post.date_value_1')));
+            $where['ADDTIME'] = array(array('EGT', input('post.date_value_0')), array('ELT',input('post.date_value_1')) );
+        } elseif ( !empty(input('post.date_value_0')) ){
+            $where['ADDTIME'] = array('EGT', input('post.date_value_0'));
+        } elseif ( !empty(input('post.date_value_1')) ){
+            $where['ADDTIME'] = array('ELT', input('post.date_value_1'));
         }
-        $page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");
-        $page_size = empty(input('post.page_size')) ? "20" : input("post.page_size");
         
-        $data = [];
-        $data['list'] = db("Mail")->where($where)->limit($page_size)->page($page_index)->order('ADDTIME DESC')->select();
-        foreach ($data['list'] AS $key => $value){
-            $data['list'][$key] = array_merge($value, getCItyName($value['AREA']));
-        }
-        $data['total'] = db("Mail")->where($where)->count();
+        $this->_model = "Mail";
+        $this->_where = $where;
         
-        rjson($data);
+        parent::list();
+        
     }
     
     public function getExpress(){

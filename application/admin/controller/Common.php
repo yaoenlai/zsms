@@ -13,6 +13,8 @@ class Common extends Controller
     protected $_where=[];       //查询条件
     protected $_order='ADDTIME DESC';   //排序       
     
+    protected $_saveData = [];     //修改参数
+    
     protected $_model;    
     
     public function _initialize(){
@@ -88,9 +90,10 @@ class Common extends Controller
         $data = input("post.");
         $data['UPDATE_TIME'] = date("Y-m-d H:i:s", time());
         $data['UPDATE_ID'] = $this->admin_id;
-        
-        $save_data = array_change_key_case($data, CASE_UPPER );
+              
+        $save_data = empty($this->_saveData) ? array_change_key_case($data, CASE_UPPER ) : $this->_saveData;
         $where = empty($this->_where) ? ['ID'=>input('post.id')] : $this->_where;
+        
         if( db($this->_model)->where($where)->update($save_data) ){
             
             behavior('app_init', $this->admin_id, $this->_model, '2', $where, $save_data);

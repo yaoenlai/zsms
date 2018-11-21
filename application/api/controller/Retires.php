@@ -71,6 +71,9 @@ class Retires extends Common
         ];
         
         $find = db('RetireInfo')->where($where)->find();
+        if(empty($find)){
+            rjson('', '400', '未找到退休人员认证信息，请与当地参保机构联系');
+        }
         $find['PID'] = $retire_info['ID'];
         //判断是否需要支付
         if($find['IS_PAY'] == '1'){

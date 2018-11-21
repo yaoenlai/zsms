@@ -157,6 +157,8 @@ class Social extends Common
             $gua_list['ADD_TIME']   = time();
             $gua_list['ADD_DATE']   = date("Y-m-d H:i:s");
             
+            if(empty($gua_list['FRONT_IMG']) || empty($gua_list['OPPOSITE_IMG'])) rjson('', '400', '监护人身份证拍摄不全');
+            
             if( db("guardian")->insert($gua_list) ){
                 rjson('监护人信息录入成功');
             } else {
