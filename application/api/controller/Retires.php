@@ -82,6 +82,14 @@ class Retires extends Common
         } else {
             db("Order")->where(['PREPAY_ID'=>$retire_info['PREPAY_ID']])->delete();
         }
+        
+        //获取人脸验证次数和活体验证次数
+        $where = [
+           'PID'    => $retire_info['ID'] 
+        ];
+        $find['RETIRE_FACE_NUM'] = db("RetireFace")->where($where)->count();
+        $find['RETIRE_LIVE_NUM'] = db("RetireLive")->where($where)->count();
+        
         rjson($find);
     }
     
