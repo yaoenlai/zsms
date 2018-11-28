@@ -257,7 +257,7 @@ return [
     	'app_id' => "2018101661650776",
     	
     	//异步通知地址
-    	'notify_url' => "http://47.96.12.115:82/pay/Ali/notify",
+    	'notify_url' => "http://zjk.yaoenlai.cn/pay/Ali/notify",
         
     	//商户私钥
         'merchant_private_key' => "MIIEowIBAAKCAQEAqk36iXaXDS9X8uNyGu+jCHtnvS4JSPHieyz0f/YA5PrrKJlILbq/FVOUEwrR+uPBdfROARuFy+PMmWbBiHxXigqcbjPjAF1SQNCOclDPYNMSfgN7SORANvVg2Rqy3DIAKSlvOzbkccy8J6r6Ev48o11hZMOdUac+eWiWT8XA84gd0AaqVjW6RHC/a5yoseWdUJgam8Tt/EAkPPG8XnpyYBe9XZTIVNccBWfAp9F4svEDywuiLIh51nWcvVYNfNaEwHoYeH6/b3n5jp1164kjpLYrKIB8Rm/VYAlGJHQPDCwZWHoNSAzMkI17v0eIhmJPSTbxER61HuQgcSduNYJ3yQIDAQABAoIBACCeyRNVdL9gxx7N9Ag2yGqSgJ9a1wpy0me3h6mO7ELv0OU43vtrXrhuBtnS47+DqoW2Ys6RgAI6wvDLHtzOvFHDkI0HQT7LoTqq9+3rjp1EMLGUZyPiHG6qd39+Pq4woZlAx353GDC3/341oKrMqb683y/WzCZcu3mzz7696SR8KQQ17vBb4AEzehPCXpM9OHdJXr1jU6+Yxwp4gCet7s2IImwRU+EtRuBzqT90iM0qNEKtymO/acyDd/+ZvFYMm55HoNrYTMM2+U4ZKHyzv4nPQ0tfcYQU+rDxe0VkEQmHAzD23IRr9h27RDAUSYTLfV3r6eUI3TJKbtfmBKylVlECgYEA0ejaXrG7SyH+a68TA4Z+DZYgf8LdPyqPga+XroHhpD1/cadnTLFM8qZZxEZmlCfHi5M1g0AdN6NhBIScX+j0CQ6C8nttxw8Zg0gDaooIHE1X3ysNbVqsVIYzaf6+augfbtvGAPcp2E+OTt8+P+sz9vb66fJlgNd3I6o2fauH/HUCgYEAz7LnymHgdJ5t79LhP713mMXUalDMFsQ4hkLiSmLTSLYP0rurK1wOowtuIIkwev4pN1lCp12bar5NN44JcD0CZ+U1lzQqnOanN4s3bgb46tcTok2KSe3ap5RuxCrH2Ae+A4vQWDHMCozfkSShYwOduy5BK7UCIHQN6PfeOiAtM4UCgYAvwjoE9400j/xyBbhewffmIXUtfGmYWJekGw54zuZG1xMrCbqQEXr/bmfYJ2hpZw+YqxquzSSYpxyIyZ9GlxsHAH08rGaSttXIL9dPIy6rOdG3XfVFHy88X/hMsoAilMOqFmjbiWDE7XzkZxijtGDzXMhD+Dmt8dgSjkStnRxojQKBgQC+s9fbnQ7IRQdQImIrcj2zikFE9LbPWI9Fx3ebMS4qHvBcX3AEudu+nKobOZvH8kHJzi1DGtGuqtifX80OvxXMa0pPcNiHg8iZWTwlzEUU6zHd3jBRPRF8uO8TMuyXUFSJUQCVWfOs5DgKPoXoMdPLn+a6yNIRFj4HYD8tQ4n9OQKBgGDQUiQqU0Ma7pSCfs964wiqjuTjjX7JkDdAqppQ3ezQp1LpFKjjme+2uen0zwIViKJpPp1oMPBVJ9ZJWVCeG/UjwYYCCrHzWlG9ia9/ZZBWZOeI+p+hG18fDQIOVJzdhtiIzPCLEprBthHo+w78hWWvY8lQoSf38AaOX+GXXGbo",
@@ -276,7 +276,7 @@ return [
         
         'appid' => 'wx350a1212664243a1',
         'mch_id'=> '1483140212',
-        'notify_url' => 'http://47.96.12.115:82/pay/Wx/notify',
+        'notify_url' => 'http://zjk.yaoenlai.cn/pay/Wx/notify',
         'key'  => 'YDKJ20181021ydkjYDKJ20181021ydkj',
     ],   
     
@@ -284,8 +284,8 @@ return [
     // | 文件路径
     // +----------------------------------------------------------------------
     'file_path' => [
-        'card_path'     => 'E:\public_img\card_path',
-        'retire_path'   => 'E:\public_img\retire_path',
-        'doc_path'      => 'E:\public_img\doc_path',
+        'card_path'     => 'E:\UPLOAD\sbkcjpic',
+        'retire_path'   => 'E:\UPLOAD\txrzpic',
+        'doc_path'      => 'E:\UPLOAD\daword',
     ],
 ];
