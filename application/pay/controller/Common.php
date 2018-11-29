@@ -72,7 +72,7 @@ class Common extends Controller
         /* 获取社保基础信息 */
         $where = [
             'PREPAY_ID' => $this->perpay_id
-            ,'IS_LOCK'  => '1'
+//             ,'IS_LOCK'  => '1'
         ];
         $card_info = db("Card")->where($where)->find();
         if(empty($card_info)){
