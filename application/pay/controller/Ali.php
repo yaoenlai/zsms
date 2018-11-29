@@ -3,13 +3,17 @@ namespace app\pay\controller;
 
 use Lib\aop\AopClient;
 
-class Ali 
+class Ali extends Common
 {
     function notify()
     {
-        
+        $result = input('post.');
         //存入文件
-        file_put_contents('./ali.txt', json_encode($_POST).'\r\n', 8);
+        file_put_contents('./ali.txt', json_encode($result)."\r\n", 8);
+        
+        $this->perpay_id = $result['out_trade_no'];
+        $this->pay_money = $result['total_amount'] / 100;
+        $this->pay_ment = 2;
         
         $aop = new AopClient();
         
