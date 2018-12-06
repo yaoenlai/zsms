@@ -38,7 +38,8 @@ class Card extends Model
                 ,'IS_LOCK'  => '1'
             ];
             if( db('Card')->where($where)->count() >= 3 ){
-                return ['status'=> '5'];
+//                 return ['status'=> '5'];
+                return ['status'=>'1'];
             } else {
                 return ['status'=>'1'];
             }      
