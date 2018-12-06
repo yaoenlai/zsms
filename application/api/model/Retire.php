@@ -183,7 +183,7 @@ class Retire extends Model
         ];
         $policy_info = db('Policy')->where($policy_where)->find();
         if(empty($policy_info)){
-            rjson('', '400', '退休用户 周期未设置');
+            rjson('', '400', '认证周期未设置！！！');
         }
         //认证开始时间
         if($policy_info['PERIOD_BEGINYEAR'] == 0){
