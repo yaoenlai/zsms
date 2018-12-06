@@ -63,10 +63,10 @@ class Retire extends Common
         $data = [];
         //获取基本信息
         $data['info'] = db('RetireInfo')->where(['CODE'=>input('post.code')])->find();
-        //获取活体对比记录
-        $data['face'] = db("RetireFace")->where(['PID'=>input('post.id')])->order("CREATE_TIME DESC")->select();
         //获取详细信息
         $data['detail'] = db('Retire')->where(['ID'=>input('post.id')])->find();
+        //获取活体对比记录
+        $data['face'] = db("RetireFace")->where(['PID'=>input('post.id'),'CYC'=>$data['detail']['CYC']])->order("CREATE_TIME DESC")->select();      
         
         rjson($data);
     }
