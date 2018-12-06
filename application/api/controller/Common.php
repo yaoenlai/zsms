@@ -38,6 +38,10 @@ class Common extends Controller
                     
                     $this->_loginInfo = $info;
                     $this->_userInfo = db("User")->where(['ID'=>$this->_loginInfo['U_ID']])->find();
+                    //验证是否实名认证
+                    if( (empty($this->_userInfo['CODE']) || empty($this->_userInfo['USERNAME'])) && (request()->controller() != "Member") ){
+                        rjson('', '420', '请先认证');
+                    }
                     $this->_postData = input('post.');
                     
                     $this->page_index = empty(input('post.page_index')) ? "1" : input("post.page_index");

@@ -61,6 +61,7 @@ class Social extends Common
     }
 
     //支付订单 （回调获取）
+    /* 2018/11/29 app更新之后废弃 */
     public function pay_order(){
         switch (input('post.pay_type')){
             case '1': 
