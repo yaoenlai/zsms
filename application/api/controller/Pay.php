@@ -8,6 +8,8 @@ use Lib\wx\WechatAppPay;
 class Pay
 {
  
+    public $return_data = [];
+    
     //暂时废弃
     public function pay_type(){
         $data = input('post.');
@@ -57,7 +59,8 @@ class Pay
         $request->setBizContent($bizcontent);
         //这里和普通的接口调用不同，使用的是sdkExecute
         $response = $aop->sdkExecute($request);
-        rjson($response);
+        
+        $this->return_data = $response;
         //htmlspecialchars是为了输出到页面时防止被浏览器将关键参数html转义，实际打印到日志以及http传输不会有这个问题
 //         echo htmlspecialchars($response);//就是orderString 可以直接给客户端请求，无需再做处理。
     }
@@ -77,7 +80,33 @@ class Pay
         }
         $param['total_fee'] = $data['total_fee']*100;
         $arr = $WeChat->wechat_pay($data['body'], $data['out_trade_no'], $param['total_fee']);
-        rjson($arr);
+        $this->return_data = $arr;
     }
     
+    public function __destruct()
+    {
+        $perpay_id = input('post.out_trade_no');
+        $where = [
+            'PREPAY_ID' => $perpay_id
+        ];
+        $info = db("Order")->where($where)->find();
+        
+        $pid = [];
+        switch ($info['TYPE']){
+            case '1':
+                $pid = db('Card')->where($where)->value("ID");
+                break;
+            case '2':
+                $pid = db('CardMail')->where($where)->value("ID");
+                break;
+            case '3':
+                $pid = db("Retire")->where($where)->value("ID");
+                break;
+        }
+        $data = [
+            'pay'   => $this->return_data
+            ,'id'   => $pid
+        ];
+        rjson($data);
+    }
 }
