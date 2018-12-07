@@ -276,7 +276,8 @@ class Card extends Model
         $save['IS_DOWN'] = 1 ;
         
         $where = [
-            "id" => $data['card_id'],
+            "ID"            => $data['card_id'],
+//             'EXAM_STATUS'   => '0',
         ];
         
         Db::startTrans();
