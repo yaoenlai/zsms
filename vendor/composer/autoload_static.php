@@ -34,14 +34,9 @@ class ComposerStaticInitc94282066b37db717bd33a803010a46a
         ),
         'P' => 
         array (
-            'Psr\\Log\\' => 8,
             'PhpOffice\\PhpWord\\' => 18,
             'PhpOffice\\Common\\' => 17,
             'Phinx\\' => 6,
-        ),
-        'M' => 
-        array (
-            'Monolog\\' => 8,
         ),
     );
 
@@ -84,10 +79,6 @@ class ComposerStaticInitc94282066b37db717bd33a803010a46a
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-escaper/src',
         ),
-        'Psr\\Log\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
-        ),
         'PhpOffice\\PhpWord\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
@@ -100,9 +91,15 @@ class ComposerStaticInitc94282066b37db717bd33a803010a46a
         array (
             0 => __DIR__ . '/..' . '/topthink/think-migration/phinx/src/Phinx',
         ),
-        'Monolog\\' => 
+    );
+
+    public static $prefixesPsr0 = array (
+        'P' => 
         array (
-            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+            'PHPExcel' => 
+            array (
+                0 => __DIR__ . '/..' . '/phpoffice/phpexcel/Classes',
+            ),
         ),
     );
 
@@ -115,6 +112,7 @@ class ComposerStaticInitc94282066b37db717bd33a803010a46a
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitc94282066b37db717bd33a803010a46a::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitc94282066b37db717bd33a803010a46a::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitc94282066b37db717bd33a803010a46a::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitc94282066b37db717bd33a803010a46a::$classMap;
 
         }, null, ClassLoader::class);
