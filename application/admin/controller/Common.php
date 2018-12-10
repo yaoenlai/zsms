@@ -110,7 +110,7 @@ class Common extends Controller
         
         $data = [];       
         $data['list'] = db($this->_model)->where($this->_where)->limit($page_size)->page($page_index)->order($this->_order)->select();
-        $data['total'] = db($this->_model)->where($this->_where)->count();
+        $data['total'] = (db($this->_model)->where($this->_where)->count())*1;
         
 //         behavior('app_init', $this->admin_id, $this->_model, '4', $this->_where);
         rjson($data);

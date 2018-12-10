@@ -13,6 +13,26 @@ class Publics extends Common
         }
     }
     
+    //获取省市区详细信息
+    public function getCity(){
+        
+        $list = cache('city');
+        if(empty($list)){
+            $where = [
+                'PARENT_ID' => 100000,
+            ];
+            $list = db('Area')->where($where)->select();
+            foreach ($list AS $k => $v){
+                $list[$k]['cities'] = db('Area')->where(['PARENT_ID' => $v['AREA_ID']])->select();
+                foreach ($list[$k]['cities'] AS $key => $value){
+                    $list[$k]['cities'][$key]['cities'] = db('Area')->where(['PARENT_ID' => $value['AREA_ID']])->select();
+                }
+            }
+            cache('city', $list, 3600*24);
+        }     
+        rjson($list);
+    }
+    
     //生成文件
     public function putContent(){
         $path = input('post.path');
