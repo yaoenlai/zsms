@@ -12,7 +12,7 @@ class Ali extends Common
         file_put_contents('./ali.txt', json_encode($result)."\r\n", 8);
         
         $this->perpay_id = $result['out_trade_no'];
-        $this->pay_money = $result['total_amount'] / 100;
+        $this->pay_money = $result['total_amount'];
         $this->pay_ment = 2;
         
         $aop = new AopClient();
