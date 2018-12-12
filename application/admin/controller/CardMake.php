@@ -21,7 +21,7 @@ class CardMake extends Common
         if(!empty(input('post.make_status'))){
             $where['MAKE_STATUS']  = array("EQ", input('post.make_status'));
         }
-        if(!empty(input('post.express_status'))){
+        if(is_numeric(input('post.express_status'))){
             $where['EXPRESS_STATUS']  = array("EQ", input('post.express_status'));
         }
         if(!empty(input('post.zone_code'))){
@@ -197,6 +197,38 @@ class CardMake extends Common
                 );;
                 $data = data_import('.'.$return['path'], $return['ext']);
                 if( (new CardMakeModel())->upload($data) ){
+                    rjson('导入更新成功');
+                } else {
+                    rjson_error('导入更新失败');
+                }
+            }else{
+                // 上传失败获取错误信息
+                rjson_error($file->getError());
+            }
+        }
+    }
+    
+    public function import2(){
+        $file = request()->file('file');
+        // 移动到框架应用根目录/public/uploads/ 目录下
+        if($file){
+            
+            $config = [
+                'size'  => 30000000
+                ,'ext' => array('xls', 'xlsx')
+            ];
+            $savePath = '/uploads/excel/';
+            
+            $info = $file->validate($config)->move(ROOT_PATH . 'public' . DS . $savePath);
+            if($info){
+                // 成功上传后 获取上传信息
+                $return = array(
+                    'ext'       => $info->getExtension(),
+                    'path'      => $savePath.$info->getSaveName(),
+                    'file_name' => $info->getFilename()
+                );;
+                $data = data_import('.'.$return['path'], $return['ext']);
+                if( (new CardMakeModel())->upload2($data) ){
                     rjson('导入更新成功');
                 } else {
                     rjson_error('导入更新失败');

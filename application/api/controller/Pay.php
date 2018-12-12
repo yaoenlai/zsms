@@ -28,6 +28,9 @@ class Pay
     
     public function aliapi(){
         $data = input('post.');
+        if( $this->order_verification($data['out_trade_no'])){
+            rjson('', '400', '该订单已支付过');
+        }
         
         $aop = new AopClient;
         $aop->gatewayUrl = "https://openapi.alipay.com/gateway.do";
@@ -60,7 +63,7 @@ class Pay
         //这里和普通的接口调用不同，使用的是sdkExecute
         $response = $aop->sdkExecute($request);
         
-        $this->return_data = $response;
+        $this->return_destruct($response);
         //htmlspecialchars是为了输出到页面时防止被浏览器将关键参数html转义，实际打印到日志以及http传输不会有这个问题
 //         echo htmlspecialchars($response);//就是orderString 可以直接给客户端请求，无需再做处理。
     }
@@ -68,7 +71,9 @@ class Pay
     
     public function wxpay(){
         $data = input('post.');
-        
+        if( $this->order_verification($data['out_trade_no'])){
+            rjson('', '400', '该订单已支付过');
+        }
         
         $WeChat = new WechatAppPay();
         
@@ -80,10 +85,24 @@ class Pay
         }
         $param['total_fee'] = $data['total_fee']*100;
         $arr = $WeChat->wechat_pay($data['body'], $data['out_trade_no'], $param['total_fee']);
-        $this->return_data = $arr;
+        $this->return_destruct($arr);
     }
     
-    public function __destruct()
+    //订单验证是否支付过
+    private function order_verification($prepay_id){
+        $where = [
+            'PREPAY_ID' => $prepay_id,
+            'STATUS'    => '1',
+        ];
+        if( db("Order")->where($where)->count() > '0'){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    //当前类统一返回
+    private function return_destruct($return)
     {
         $perpay_id = input('post.out_trade_no');
         $where = [
@@ -104,7 +123,7 @@ class Pay
                 break;
         }
         $data = [
-            'pay'   => $this->return_data
+            'pay'   => $return
             ,'id'   => $pid
         ];
         rjson($data);

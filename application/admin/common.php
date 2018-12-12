@@ -77,7 +77,7 @@ function toExcel($list,$filename,$indexKey,$startRow=1,$excel2007=false){
     foreach ($list as $row) {
         foreach ($indexKey as $key => $value){
             //这里是设置单元格的内容
-            $objActSheet->setCellValue($header_arr[$key].$startRow,$row[$value]);
+            $objActSheet->setCellValue($header_arr[$key].$startRow,$row[$value]."\t");
         }
         $startRow++;
     }
