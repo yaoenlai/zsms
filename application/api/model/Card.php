@@ -86,6 +86,15 @@ class Card extends Model
             $insert['STATUS']       = 2;
             $insert['STATE']        = 1;
             if( db('order')->insert($insert) ){
+                /* 判断是否有待处理的社保卡信息 */
+                $where = [
+                    'C_CODE'        => $this->_postData['c_code']
+                    ,'IS_LOCK'      => '1'
+                    ,'EXAM_STATUS'  => '0'
+                ];
+                if(db("Card")->where($where)->count() > 0){
+                    exception("请求超时，请返回列表");
+                }
                 /* 删除遗留社保详情表  */
                 $where = [
                     'C_CODE'    => $this->_postData['c_code']
@@ -133,6 +142,10 @@ class Card extends Model
                     
                     /* 即将录入的社保基础信息的存储 */
                     $insert_card                = $insert_info;
+                    /* 社保卡录入是否邮寄的信息 */
+                    if(!empty(input('post.card_id'))){
+                        $insert_card['IS_EXPRESS'] = db('Card')->where(['ID'=>input('post.card_id')])->value("IS_EXPRESS");
+                    }
                     $insert_card['C_ADD_TIME']  = time();
                     $insert_card['C_ADD_DATE']  = date("Y-m-d H:i:s", time());
                     if( db('Card')->insert($insert_card) ){
