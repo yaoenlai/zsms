@@ -11,10 +11,10 @@ class CardMakeModel extends Model
         try {
             foreach ($data AS $key => $value){
                 $where = [
-                    'ID'    => $value['A']
+                    'ID'    => trim($value['A'])
                 ];
                 $save_data = [
-                    'EXPRESS_NUM'   => $value['B'],
+                    'EXPRESS_NUM'   => trim($value['B']),
                     'ADD_DATE'      => date("Y-m-d H:i:s"),
                     'ADD_TIME'      => time(),
                 ];
@@ -33,7 +33,7 @@ class CardMakeModel extends Model
         try {
             foreach ($data AS $key => $value){
                 $where = [
-                    'C_CODE'    => $value['A']
+                    'C_CODE'    => trim($value['A'])
                 ];
                 $save_data = [
                     'MAKE_STATUS'   => '2',
@@ -43,6 +43,7 @@ class CardMakeModel extends Model
                 db("CardMake")->where($where)->update($save_data);
             }
             Db::commit();
+//             Db::rollback();
             return true;
         } catch (\Exception $e){
             Db::rollback();
