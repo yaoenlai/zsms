@@ -183,7 +183,16 @@ class Retire extends Model
         ];
         $policy_info = db('Policy')->where($policy_where)->find();
         if(empty($policy_info)){
-            rjson('', '400', '认证周期未设置！！！');
+            
+            unset($policy_where['PERIOD_BEGIN']);
+            unset($policy_where['PERIOD_END']);
+            $policy_info = db('Policy')->where($policy_where)->find();
+            if(empty($policy_info)){
+                rjson('', '400', '认证周期未设置，请联系工作人员！！！');
+            } else {
+                $next_policy_date = $this->next_policy_date($policy_info);
+                rjson('', '400', "您好，暂时还未开始认证工作，请于:{$next_policy_date['create_date']}-{$next_policy_date['end_date']} 再进行认证");
+            }
         }
         //认证开始时间
         if($policy_info['PERIOD_BEGINYEAR'] == 0){
@@ -217,21 +226,28 @@ class Retire extends Model
         if(empty($retire_info)){
             return false;
         } else if($retire_info['FACE_STATUS'] == '1'){
-            //下次认证开始时间
-            switch ($policy_info['PERIOD_BEGINYEAR_NEXT']){
-                case '0' : $create_date = date("Y-", strtotime("-1 year")).$policy_info['PERIOD_BEGIN_NEXT'];break;
-                case '1' : $create_date = date("Y-").$policy_info['PERIOD_BEGIN_NEXT'];break;
-                case '2' : $create_date = date("Y-", strtotime("+1 year")).$policy_info['PERIOD_BEGIN_NEXT'];break;
-            }
-            //下次认证结束时间
-            switch ($policy_info['PERIOD_ENDYEAR_NEXT']){
-                case '0' : $end_date = date("Y-", strtotime("-1 year")).$policy_info['PERIOD_END_NEXT'];break;
-                case '1' : $end_date = date("Y-").$policy_info['PERIOD_END_NEXT'];break;
-                case '2' : $end_date = date("Y-", strtotime("+1 year")).$policy_info['PERIOD_END_NEXT'];break;
-            }
-            rjson('', '400', "已经成功认证,下次认证时间为:{$create_date}-{$end_date}");
+            
+            $next_policy_date = $this->next_policy_date($policy_info);
+            rjson('', '400', "已经成功认证,下次认证时间为:{$next_policy_date['create_date']}-{$next_policy_date['end_date']}");
         } else {
             return $retire_info;
         }
+    }
+    
+    private function next_policy_date(array $policy_info){
+        
+        //下次认证开始时间
+        switch ($policy_info['PERIOD_BEGINYEAR_NEXT']){
+            case '0' : $create_date = date("Y-", strtotime("-1 year")).$policy_info['PERIOD_BEGIN_NEXT'];break;
+            case '1' : $create_date = date("Y-").$policy_info['PERIOD_BEGIN_NEXT'];break;
+            case '2' : $create_date = date("Y-", strtotime("+1 year")).$policy_info['PERIOD_BEGIN_NEXT'];break;
+        }
+        //下次认证结束时间
+        switch ($policy_info['PERIOD_ENDYEAR_NEXT']){
+            case '0' : $end_date = date("Y-", strtotime("-1 year")).$policy_info['PERIOD_END_NEXT'];break;
+            case '1' : $end_date = date("Y-").$policy_info['PERIOD_END_NEXT'];break;
+            case '2' : $end_date = date("Y-", strtotime("+1 year")).$policy_info['PERIOD_END_NEXT'];break;
+        }
+        return array('create_date'=>$create_date, 'end_date'=>$end_date);
     }
 }
