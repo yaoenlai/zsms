@@ -227,7 +227,7 @@ class Card extends Model
         try {
             /* 修改个人详情信息 */
             $where = [
-                'PREPAY_ID' => $this->_postData['prepay_id'],
+                'PREPAY_ID'     => $this->_postData['prepay_id'],
             ];
             
             $insert_bak = [];
@@ -264,6 +264,10 @@ class Card extends Model
                 $insert['C_UPDATE_TIME']    = time();
                 $insert['C_UPDATE_DATE']    = date("Y-m-d H:i:s");
                 $insert['EXAM_STATUS']      = 1;
+                
+                /* 不是图片不通过 */
+                $where['REFUSE_STATUS'] = array('NEQ', '2');
+                
                 if( db('card')->where($where)->update($insert) ){
                     Db::commit();
                     rjson('修改成功');
@@ -290,7 +294,7 @@ class Card extends Model
         
         $where = [
             "ID"            => $data['card_id'],
-//             'EXAM_STATUS'   => '0',
+            'EXAM_STATUS'   => array('NEQ', '2'),
         ];
         
         Db::startTrans();
