@@ -50,4 +50,27 @@ class CardMakeModel extends Model
             return false;
         }
     }
+    
+    public function upload3($data){
+        Db::startTrans();
+        try {
+            foreach ($data AS $key => $value){
+                $where = [
+                    'C_CODE'    => trim($value['A'])
+                ];
+                $save_data = [
+                    'EXPRESS_STATUS'    => '3',
+                    'EXPRESS_ZK_DATE'   => date("Y-m-d H:i:s"),
+                    'EXPRESS_ZK_TIME'   => time(),
+                ];
+                db("CardMake")->where($where)->update($save_data);
+            }
+            Db::commit();
+//              Db::rollback();
+            return true;
+        } catch (\Exception $e){
+            Db::rollback();
+            return false;
+        }
+    }
 }

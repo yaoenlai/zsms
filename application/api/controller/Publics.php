@@ -215,7 +215,12 @@ class  Publics extends Controller
         $data = input('post.');
         unset($data['url']);
         
-        echo curl_post($url, $data);
+        $tmp_name = [];
+        if(!empty($data['image_ref1'])) $tmp_name["image_ref1"] = new \CURLFile(config('file_path.retire_path').str_replace('/retire_img?path=', '', $data['image_ref1']));
+        if(!empty($data['image_ref2'])) $tmp_name["image_ref2"] = new \CURLFile(config('file_path.retire_path').str_replace('/retire_img?path=', '', $data['image_ref2']));
+        $post_data = array_merge($data, $tmp_name);    
+        
+        echo curl_post($url, $post_data);
     }
     
     public function gen_sign(){
@@ -229,6 +234,6 @@ class  Publics extends Controller
         $srcStr = "a=%s&b=%d&c=%d&d=%d";
         $srcStr = sprintf($srcStr, $apiKey, $expired_time, $current_time, $rdm);
         $sign = base64_encode(hash_hmac('SHA1', $srcStr, $apiSecret, true).$srcStr);
-        return $sign;
+        rjson($sign);
     }
 }
