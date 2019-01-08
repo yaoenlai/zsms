@@ -6,6 +6,7 @@ use think\Request;
 
 class Index extends Controller
 {
+    //分享用户获取积分
     public function index($u_id){
         
         $send_info = db('User')->where(['ID'=>$u_id])->find();
@@ -59,4 +60,8 @@ class Index extends Controller
         }
     }
     
+    //分享文章
+    public function share_news($news_id){
+        
+    }
 }

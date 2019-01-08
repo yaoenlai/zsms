@@ -186,19 +186,7 @@ class  Publics extends Controller
 
         $post_data = array_merge($data, $tmp_name);
         
-        $ch = curl_init();
-        curl_setopt($ch , CURLOPT_URL , $url);
-        curl_setopt($ch , CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch , CURLOPT_POST, 1);
-        curl_setopt($ch , CURLOPT_POSTFIELDS, $post_data);
-        curl_setopt($ch , CURLOPT_SSL_VERIFYPEER, false);
-        $output= curl_exec($ch);
-        if(curl_errno($ch)){
-            rjson('', '400', curl_error($ch));
-        }
-        curl_close($ch);
-     
-        echo $output;
+        echo curl_post($url, $post_data);
     }
     
     public function card_jsonp(){
@@ -219,19 +207,28 @@ class  Publics extends Controller
         
         $post_data = array_merge($data, $tmp_name);
         
-        $ch = curl_init();
-        curl_setopt($ch , CURLOPT_URL , $url);
-        curl_setopt($ch , CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch , CURLOPT_POST, 1);
-        curl_setopt($ch , CURLOPT_POSTFIELDS, $post_data);
-        curl_setopt($ch , CURLOPT_SSL_VERIFYPEER, false);
-        $output= curl_exec($ch);
-        if(curl_errno($ch)){
-            rjson('', '400', curl_error($ch));
-        }
-        curl_close($ch);
-        
-        echo $output;
+        echo curl_post($url, $post_data);
     }
     
+    public function jsonp2(){
+        $url = input('post.url');
+        $data = input('post.');
+        unset($data['url']);
+        
+        echo curl_post($url, $data);
+    }
+    
+    public function gen_sign(){
+        $apiKey = 'Ahqtp60UiHyQOfhbq5tVC3kf29NmZNTd';
+        $apiSecret = 'KySRW9tHShPUhZAf3bkxb8yKR_jINZ9C';
+        $expired = 100;
+        
+        $rdm = rand();
+        $current_time = time();
+        $expired_time = $current_time + $expired;
+        $srcStr = "a=%s&b=%d&c=%d&d=%d";
+        $srcStr = sprintf($srcStr, $apiKey, $expired_time, $current_time, $rdm);
+        $sign = base64_encode(hash_hmac('SHA1', $srcStr, $apiSecret, true).$srcStr);
+        return $sign;
+    }
 }

@@ -171,3 +171,23 @@ function mkdirs($path){
         return true;
     }
 }
+
+/**
+ * 跨域curl进行post请求
+ * @param string $url 请求地址
+ * @param array $post_data 请求数据
+ * */
+function curl_post($url, $post_data){
+    $ch = curl_init();
+    curl_setopt($ch , CURLOPT_URL , $url);
+    curl_setopt($ch , CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch , CURLOPT_POST, 1);
+    curl_setopt($ch , CURLOPT_POSTFIELDS, $post_data);
+    curl_setopt($ch , CURLOPT_SSL_VERIFYPEER, false);
+    $output= curl_exec($ch);
+    if(curl_errno($ch)){
+        rjson('', '400', curl_error($ch));
+    }
+    curl_close($ch);
+    return $output;
+}
