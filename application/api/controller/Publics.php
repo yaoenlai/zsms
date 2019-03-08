@@ -236,4 +236,20 @@ class  Publics extends Controller
         $sign = base64_encode(hash_hmac('SHA1', $srcStr, $apiSecret, true).$srcStr);
         rjson($sign);
     }
+    
+    public function app_verify(){
+        
+        $url = input('post.url');
+        $data = input('post.');
+        unset($data['url']);
+        
+        $tmp_name = [];
+        foreach ($_FILES AS $key => $value){
+            $tmp_name["meglive_data"] = new \CURLFile($value['tmp_name']);
+        }
+        
+        $post_data = array_merge($data, $tmp_name);
+        
+        echo curl_post($url, $post_data);
+    }
 }

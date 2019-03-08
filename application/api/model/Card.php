@@ -310,7 +310,7 @@ class Card extends Model
                     exception(showRegError(-16).'[2]');
                 }
             } else {
-                exception(showRegError(-16),'[1]');
+                exception(showRegError(-16),'1');
             }
         } catch (\Exception $e){
             Db::rollback();

@@ -141,6 +141,7 @@ function get_source_img($code,$path=''){
  * @param string $u_id 接受用户U_ID
  *  */
 function msg_add($title='', $content='', $u_id, $type='2'){
+    return true;
     $insert = [
         'TITLE'     => $title
         ,'CONTENT'  => $content
@@ -184,6 +185,7 @@ function curl_post($url, $post_data){
     curl_setopt($ch , CURLOPT_POST, 1);
     curl_setopt($ch , CURLOPT_POSTFIELDS, $post_data);
     curl_setopt($ch , CURLOPT_SSL_VERIFYPEER, false);
+
     $output= curl_exec($ch);
     if(curl_errno($ch)){
         rjson('', '400', curl_error($ch));
